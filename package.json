@@ -1,0 +1,12 @@
+{
+  "name": "cymo-tracker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CYMO tracker server and pack browser API",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
