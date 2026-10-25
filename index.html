@@ -72,6 +72,7 @@
             width: min(30vw, 300px);
             aspect-ratio: 4 / 3;
             height: auto;
+            overflow: hidden;
             pointer-events: none;
             background-color: transparent;
             display: flex;
@@ -1196,6 +1197,8 @@
     document.getElementById('workspace').addEventListener('scroll', resizeScope);
     window.addEventListener('resize', resizeScope);
     resizeScope();
+    const headerResizeObserver = new ResizeObserver(resizeScope);
+    headerResizeObserver.observe(document.getElementById('glitch-header'));
     window.addEventListener('load', resizeScope);
 
     let lastScopeDrawTime = 0;
