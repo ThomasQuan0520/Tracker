@@ -118,75 +118,103 @@ window.masterScopeAnimation = (() => {
         drawDotMatrix(scopeCanvas, sourceCanvas, breathingAmount);
     }
 
-    function renderPedestrianCrossing({ timestamp, breathingAmount }) {
+    function renderSubwayTunnel({ timestamp, breathingAmount }) {
         const width = scopeCanvas.width;
         const height = scopeCanvas.height;
         const sourceCtx = sourceCanvas.getContext('2d');
         sourceCtx.clearRect(0, 0, width, height);
         sourceCtx.lineCap = 'round';
         sourceCtx.lineJoin = 'round';
-
-        const signalX = width * 0.18;
-        const signalY = height * 0.16;
-        const signalWidth = Math.max(24, height * 0.2);
-        const signalHeight = height * 0.6;
-        const lightRadius = Math.max(4, signalWidth * 0.2);
-        const phase = (timestamp % 2400) / 2400;
-        const walkPhase = (timestamp % 900) / 900;
-        const signalState = phase < 0.4
-            ? 'red'
-            : phase < 0.5
-                ? 'red-amber'
-                : phase < 0.85
-                    ? 'green'
-                    : 'amber';
-
         sourceCtx.strokeStyle = '#FFFFFF';
-        sourceCtx.lineWidth = 2;
-        sourceCtx.strokeRect(signalX, signalY, signalWidth, signalHeight);
-        const lightY = [signalY + signalHeight * 0.22, signalY + signalHeight * 0.5, signalY + signalHeight * 0.78];
-        lightY.forEach((y, index) => {
-            const active = (index === 0 && (signalState === 'red' || signalState === 'red-amber')) ||
-                (index === 1 && (signalState === 'red-amber' || signalState === 'amber')) ||
-                (index === 2 && signalState === 'green');
-            if (!active) return;
-            sourceCtx.fillStyle = '#FFFFFF';
-            sourceCtx.beginPath();
-            sourceCtx.arc(signalX + signalWidth / 2, y, lightRadius, 0, Math.PI * 2);
-            sourceCtx.fill();
-        });
+        sourceCtx.lineWidth = Math.max(1.5, height * 0.009);
 
-        const crossingLeft = width * 0.42;
-        const crossingRight = width * 0.92;
-        const stripeY = height * 0.78;
-        sourceCtx.fillStyle = '#FFFFFF';
-        for (let x = crossingLeft; x < crossingRight; x += 18) {
-            sourceCtx.fillRect(x, stripeY, 10, Math.max(3, height * 0.07));
+        const tunnelPhase = (timestamp % 1800) / 1800;
+        const trainPhase = (timestamp % 4200) / 4200;
+        const ceilingY = height * 0.16;
+        const floorY = height * 0.84;
+
+        // Tunnel shell and repeating support ribs slide past the train.
+        sourceCtx.beginPath();
+        sourceCtx.moveTo(0, floorY);
+        sourceCtx.lineTo(0, height * 0.38);
+        sourceCtx.quadraticCurveTo(width * 0.05, ceilingY, width * 0.2, ceilingY);
+        sourceCtx.lineTo(width * 0.8, ceilingY);
+        sourceCtx.quadraticCurveTo(width * 0.95, ceilingY, width, height * 0.38);
+        sourceCtx.lineTo(width, floorY);
+        sourceCtx.stroke();
+
+        const ribSpacing = width / 5;
+        for (let rib = -1; rib <= 6; rib++) {
+            const x = rib * ribSpacing - tunnelPhase * ribSpacing;
+            sourceCtx.beginPath();
+            sourceCtx.moveTo(x, floorY);
+            sourceCtx.lineTo(x, height * 0.39);
+            sourceCtx.quadraticCurveTo(x + ribSpacing * 0.08, ceilingY, x + ribSpacing * 0.28, ceilingY);
+            sourceCtx.moveTo(x + ribSpacing * 0.72, ceilingY);
+            sourceCtx.quadraticCurveTo(x + ribSpacing * 0.92, ceilingY, x + ribSpacing, height * 0.39);
+            sourceCtx.lineTo(x + ribSpacing, floorY);
+            sourceCtx.stroke();
+
+            const lightX = x + ribSpacing * 0.34;
+            sourceCtx.fillRect(lightX, height * 0.2, ribSpacing * 0.28, Math.max(2, height * 0.012));
         }
 
-        const walkerProgress = signalState === 'green'
-            ? 0.18 + (phase - 0.5) / 0.35 * 0.72
-            : 0.18;
-        const walkerX = crossingLeft + (crossingRight - crossingLeft) * walkerProgress;
-        const walkerY = height * 0.55;
-        const stride = Math.sin(walkPhase * Math.PI * 2) * height * 0.06;
-        sourceCtx.strokeStyle = '#FFFFFF';
-        sourceCtx.lineWidth = Math.max(2, height * 0.025);
+        // Fast sleepers and rails make the forward movement legible beneath the cars.
+        const sleeperSpacing = Math.max(14, width * 0.085);
+        const sleeperOffset = (timestamp / 900 * sleeperSpacing) % sleeperSpacing;
+        sourceCtx.lineWidth = Math.max(1.5, height * 0.012);
         sourceCtx.beginPath();
-        sourceCtx.arc(walkerX, walkerY - height * 0.18, height * 0.045, 0, Math.PI * 2);
+        sourceCtx.moveTo(0, height * 0.79);
+        sourceCtx.lineTo(width, height * 0.79);
+        sourceCtx.moveTo(0, height * 0.93);
+        sourceCtx.lineTo(width, height * 0.93);
         sourceCtx.stroke();
-        sourceCtx.beginPath();
-        sourceCtx.moveTo(walkerX, walkerY - height * 0.13);
-        sourceCtx.lineTo(walkerX, walkerY);
-        sourceCtx.moveTo(walkerX, walkerY - height * 0.09);
-        sourceCtx.lineTo(walkerX - height * 0.09, walkerY - height * 0.02 + stride);
-        sourceCtx.moveTo(walkerX, walkerY - height * 0.09);
-        sourceCtx.lineTo(walkerX + height * 0.09, walkerY - height * 0.02 - stride);
-        sourceCtx.moveTo(walkerX, walkerY);
-        sourceCtx.lineTo(walkerX - height * 0.09, walkerY + height * 0.13 - stride);
-        sourceCtx.moveTo(walkerX, walkerY);
-        sourceCtx.lineTo(walkerX + height * 0.09, walkerY + height * 0.13 + stride);
-        sourceCtx.stroke();
+        sourceCtx.lineWidth = Math.max(1, height * 0.008);
+        for (let x = -sleeperSpacing; x < width + sleeperSpacing; x += sleeperSpacing) {
+            const sleeperX = x - sleeperOffset;
+            sourceCtx.beginPath();
+            sourceCtx.moveTo(sleeperX, height * 0.78);
+            sourceCtx.lineTo(sleeperX - width * 0.025, height * 0.94);
+            sourceCtx.stroke();
+        }
+
+        // A continuous row of subway cars glides across the tunnel.
+        const carWidth = width * 0.72;
+        const carPitch = carWidth + Math.max(5, width * 0.018);
+        const carHeight = height * 0.28;
+        const carY = height * 0.48;
+        for (let car = -2; car <= 3; car++) {
+            const x = car * carPitch + trainPhase * carPitch;
+            sourceCtx.lineWidth = Math.max(1.5, height * 0.012);
+            sourceCtx.beginPath();
+            sourceCtx.moveTo(x + carWidth * 0.08, carY + carHeight * 0.18);
+            sourceCtx.quadraticCurveTo(x + carWidth * 0.08, carY, x + carWidth * 0.18, carY);
+            sourceCtx.lineTo(x + carWidth * 0.82, carY);
+            sourceCtx.quadraticCurveTo(x + carWidth * 0.94, carY, x + carWidth * 0.96, carY + carHeight * 0.2);
+            sourceCtx.lineTo(x + carWidth, carY + carHeight * 0.72);
+            sourceCtx.lineTo(x + carWidth * 0.96, carY + carHeight * 0.88);
+            sourceCtx.lineTo(x + carWidth * 0.06, carY + carHeight * 0.88);
+            sourceCtx.lineTo(x + carWidth * 0.04, carY + carHeight * 0.28);
+            sourceCtx.closePath();
+            sourceCtx.stroke();
+
+            for (let windowIndex = 0; windowIndex < 4; windowIndex++) {
+                const windowX = x + carWidth * (0.18 + windowIndex * 0.16);
+                sourceCtx.strokeRect(windowX, carY + carHeight * 0.14, carWidth * 0.11, carHeight * 0.32);
+            }
+            sourceCtx.beginPath();
+            sourceCtx.moveTo(x + carWidth * 0.72, carY + carHeight * 0.08);
+            sourceCtx.lineTo(x + carWidth * 0.72, carY + carHeight * 0.84);
+            sourceCtx.moveTo(x + carWidth * 0.04, carY + carHeight * 0.63);
+            sourceCtx.lineTo(x + carWidth * 0.98, carY + carHeight * 0.63);
+            sourceCtx.stroke();
+
+            sourceCtx.beginPath();
+            sourceCtx.arc(x + carWidth * 0.25, carY + carHeight * 0.9, height * 0.025, 0, Math.PI * 2);
+            sourceCtx.arc(x + carWidth * 0.75, carY + carHeight * 0.9, height * 0.025, 0, Math.PI * 2);
+            sourceCtx.stroke();
+        }
+
         drawDotMatrix(scopeCanvas, sourceCanvas, breathingAmount);
     }
 
@@ -229,5 +257,5 @@ window.masterScopeAnimation = (() => {
         scopeCtx.clearRect(0, 0, scopeCanvas.width, scopeCanvas.height);
     }
 
-    return { resize, align, renderWaveform, renderTearEye, renderPedestrianCrossing, renderLunarWaves, clear };
+    return { resize, align, renderWaveform, renderTearEye, renderSubwayTunnel, renderLunarWaves, clear };
 })();

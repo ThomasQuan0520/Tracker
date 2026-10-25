@@ -1414,8 +1414,8 @@
         drawDotMatrix(scopeCanvas, scopeSourceCanvas, titleBreathingAmount);
     }
 
-    function renderPedestrianCrossing(timestamp) {
-        masterScopeAnimation.renderPedestrianCrossing({ timestamp, breathingAmount: titleBreathingAmount });
+    function renderSubwayTunnel(timestamp) {
+        masterScopeAnimation.renderSubwayTunnel({ timestamp, breathingAmount: titleBreathingAmount });
     }
 
     function renderLunarWaves(timestamp) {
@@ -1471,7 +1471,7 @@
                 } else if (animationMode === 1) {
                     renderComicEye(timestamp);
                 } else if (animationMode === 2) {
-                    renderPedestrianCrossing(timestamp);
+                    renderSubwayTunnel(timestamp);
                 } else {
                     renderLunarWaves(timestamp);
                 }
