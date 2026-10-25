@@ -68,8 +68,7 @@
             flex-direction: column;
             align-items: stretch;
             gap: 16px;
-            padding: 0 0 0 16px;
-            border-left: 1px solid #222;
+            padding: 0;
             background-color: transparent;
             position: relative;
             z-index: 20;
@@ -120,8 +119,7 @@
             align-items: flex-start;
             justify-content: flex-start;
             overflow: auto;
-            scrollbar-width: thin;
-            scrollbar-color: #444 #050505;
+            scrollbar-width: none;
             position: relative; z-index: 5;
             box-sizing: border-box;
             padding: 0;
@@ -219,20 +217,28 @@
             max-width: 100%;
         }
 
-        #workspace::-webkit-scrollbar,
         #glitch-header::-webkit-scrollbar {
             width: 8px;
             height: 8px;
         }
 
-        #workspace::-webkit-scrollbar-track,
         #glitch-header::-webkit-scrollbar-track {
             background: #050505;
         }
 
-        #workspace::-webkit-scrollbar-thumb,
         #glitch-header::-webkit-scrollbar-thumb {
             background: #444;
+        }
+
+        #workspace::-webkit-scrollbar {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+
+        #workspace::-webkit-scrollbar:horizontal {
+            display: none !important;
+            height: 0 !important;
         }
 
         #status-steps {
@@ -425,7 +431,7 @@
         </div>
         <header id="glitch-header">
             <div id="header-right">
-                <canvas id="title-dot-matrix" width="700" height="100"></canvas>
+                <canvas id="title-dot-matrix" width="360" height="140"></canvas>
                 <div id="top-bar">
                     <div id="tempo-status">
                         <canvas id="status-metronome" class="status-dot-matrix" width="44" height="28"></canvas>
@@ -600,7 +606,7 @@
     }
     
     function drawTitleDotMatrix() {
-        drawDotMatrixText(document.getElementById('title-dot-matrix'), "CYMO", titleBreathingAmount, 120, 'left', 16, 20);
+        drawDotMatrixText(document.getElementById('title-dot-matrix'), "CYMO", titleBreathingAmount, 130, 'left', 16, 20);
     }
 
     function drawMetronome(timestamp) {
