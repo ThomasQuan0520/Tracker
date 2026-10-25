@@ -26,8 +26,6 @@
             --text-header: #FFFFFF;
             --highlight: #222222;
             --dot-glow: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6));
-            --workspace-content-left: 20px;
-            --workspace-content-right: 20px;
         }
         body, html {
             margin: 0; padding: 0;
@@ -50,29 +48,40 @@
             z-index: 10; background-size: 100% 2px, 3px 100%;
             pointer-events: none;
         }
-        header#glitch-header {
-            width: 100%;
+        #app-layout {
+            flex: 1 1 auto;
+            min-height: 0;
             display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
+            align-items: stretch;
             gap: 20px;
-            padding: 8px 20px 10px var(--workspace-content-left);
+            padding: 12px 20px 20px;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        header#glitch-header {
+            flex: 0 0 clamp(240px, 30vw, 340px);
+            min-width: 0;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 16px;
+            padding: 0;
             background-color: transparent;
             position: relative;
             z-index: 20;
-            flex: 0 0 auto;
-            box-sizing: border-box;
+            overflow-y: auto;
         }
 
         #master-scope-container {
             flex: 0 0 auto;
-            position: absolute;
-            right: 20px;
-            top: 0;
-            width: min(30vw, 300px);
+            position: relative;
+            width: 100%;
             aspect-ratio: 4 / 3;
             height: auto;
             overflow: hidden;
+            margin-top: 4px;
             pointer-events: none;
             background-color: transparent;
             display: flex;
@@ -82,9 +91,10 @@
         
         #title-dot-matrix {
             display: block;
-            width: clamp(240px, 28vw, 360px);
+            width: 100%;
+            max-width: 360px;
             height: auto;
-            margin: 10px 0 0;
+            margin: 0;
             filter: var(--dot-glow);
         }
 
@@ -92,20 +102,25 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            gap: 4px;
-            flex: 1 1 auto;
-            max-width: calc(100% - min(30vw, 300px) - 20px);
+            gap: 12px;
+            flex: 0 0 auto;
+            width: 100%;
+            max-width: none;
             min-width: 0;
         }
         
         #workspace {
-            flex: 0 0 auto;
+            flex: 1 1 auto;
+            width: 0;
+            height: auto;
             min-height: 0;
-            display: flex; align-items: flex-start; justify-content: safe center; overflow: visible;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+            overflow: auto;
             position: relative; z-index: 5;
             box-sizing: border-box;
-            padding: 0 20px 0 20px;
-            padding-bottom: 0;
+            padding: 0;
             background-color: transparent;
         }
         
@@ -161,9 +176,10 @@
         #top-bar {
             display: flex;
             justify-content: flex-start;
-            align-items: center;
-            gap: 10px;
+            align-items: flex-start;
+            gap: 8px;
             padding: 0;
+            width: 100%;
             background-color: transparent;
             color: var(--text-header);
             position: relative;
@@ -180,7 +196,8 @@
 
         .status-dot-matrix {
             display: block;
-            height: 28px;
+            height: auto;
+            max-width: 100%;
             flex: 0 0 auto;
             image-rendering: pixelated;
             filter: var(--dot-glow);
@@ -191,11 +208,11 @@
         }
 
         #status-bpm-value {
-            height: 32px;
+            height: auto;
         }
 
         #status-preset {
-            max-width: 420px;
+            max-width: 100%;
         }
 
         #status-steps {
@@ -382,25 +399,26 @@
     </style>
 </head>
 <body>
-    <header id="glitch-header">
-        <div id="header-right">
-            <canvas id="title-dot-matrix" width="700" height="100"></canvas>
-            <div id="top-bar">
-                <div id="tempo-status">
-                    <canvas id="status-metronome" class="status-dot-matrix" width="44" height="28"></canvas>
-                    <canvas id="status-bpm-value" class="status-dot-matrix" width="52" height="32"></canvas>
+    <div id="app-layout">
+        <div id="workspace">
+            <div class="step-numbers" id="step-col"></div>
+        </div>
+        <header id="glitch-header">
+            <div id="header-right">
+                <canvas id="title-dot-matrix" width="700" height="100"></canvas>
+                <div id="top-bar">
+                    <div id="tempo-status">
+                        <canvas id="status-metronome" class="status-dot-matrix" width="44" height="28"></canvas>
+                        <canvas id="status-bpm-value" class="status-dot-matrix" width="52" height="32"></canvas>
+                    </div>
+                    <canvas id="status-steps" class="status-dot-matrix" width="80" height="28"></canvas>
+                    <canvas id="status-preset" class="status-dot-matrix" width="560" height="28"></canvas>
                 </div>
-                <canvas id="status-steps" class="status-dot-matrix" width="80" height="28"></canvas>
-                <canvas id="status-preset" class="status-dot-matrix" width="560" height="28"></canvas>
             </div>
-        </div>
-        <div id="master-scope-container">
-            <canvas id="master-scope"></canvas>
-        </div>
-    </header>
-
-    <div id="workspace">
-        <div class="step-numbers" id="step-col"></div>
+            <div id="master-scope-container">
+                <canvas id="master-scope"></canvas>
+            </div>
+        </header>
     </div>
     
     <button id="shortcuts-toggle" type="button" aria-expanded="false" aria-controls="shortcuts-panel">KEYS</button>
@@ -676,7 +694,10 @@
         }
     }
     
-    const NUM_TRACKS = 12;
+    const NUM_AUDIO_TRACKS = 8;
+    const NUM_FX_TRACKS = 2;
+    const FX_TRACK_START = NUM_AUDIO_TRACKS;
+    const NUM_TRACKS = NUM_AUDIO_TRACKS + NUM_FX_TRACKS;
     let NUM_STEPS = 16;
     let bpm = 120;
     let isPlaying = false;
@@ -697,7 +718,7 @@
     const noteNames = ['C-', 'C#', 'D-', 'D#', 'E-', 'F-', 'F#', 'G-', 'G#', 'A-', 'A#', 'B-'];
 
     const tracks = Array.from({length: NUM_TRACKS}, (_, i) => {
-        if (i < 10) {
+        if (i < NUM_AUDIO_TRACKS) {
             return { 
                 type: 'AUDIO', mode: 'SMP', slices: 16, buffer: null, fileName: null, activeSource: null, activeVelNode: null, activeVolNode: null, send1Node: null, send2Node: null, send1: 0, send2: 0, muted: false, volume: 100, 
                 currentPattern: 0, patterns: Array.from({length: 4}, () => Array.from({length: NUM_STEPS}, () => ({ note: null, velocity: null }))) 
@@ -904,7 +925,7 @@
     }
 
     function updateFXParams(busIndex) {
-        const track = tracks[10 + busIndex];
+        const track = tracks[FX_TRACK_START + busIndex];
         const info = busIndex === 0 ? fx1NodeInfo : fx2NodeInfo;
         const p1 = track.p1; const p2 = track.p2;
 
@@ -1082,9 +1103,21 @@
 
             NUM_STEPS = Math.max(4, Math.min(128, state.NUM_STEPS || 16));
 
-            for (let i = 0; i < (state.tracks || []).length && i < tracks.length; i++) {
-                const savedT = state.tracks[i];
+            const savedTracks = Array.isArray(state.tracks) ? state.tracks : [];
+            const hasTrackTypes = savedTracks.some(savedT => savedT.type === 'AUDIO' || savedT.type === 'FX');
+            const savedAudioTracks = hasTrackTypes
+                ? savedTracks.filter(savedT => savedT.type === 'AUDIO')
+                : savedTracks.slice(0, Math.min(NUM_AUDIO_TRACKS, savedTracks.length));
+            const savedFxTracks = hasTrackTypes
+                ? savedTracks.filter(savedT => savedT.type === 'FX')
+                : savedTracks.slice(savedTracks.length >= 12 ? 10 : NUM_AUDIO_TRACKS);
+
+            for (let i = 0; i < tracks.length; i++) {
                 const t = tracks[i];
+                const savedT = t.type === 'AUDIO'
+                    ? savedAudioTracks[i]
+                    : savedFxTracks[i - FX_TRACK_START];
+                if (!savedT) continue;
                 t.mode = savedT.mode || 'SMP';
                 t.slices = Number.isInteger(savedT.slices) ? savedT.slices : 16;
                 t.volume = typeof savedT.volume === 'number' ? savedT.volume : 100;
@@ -1118,7 +1151,7 @@
                     }
                 }
 
-                if (t.type === 'FX') changeFX(i - 10, t.fxType);
+                if (t.type === 'FX') changeFX(i - FX_TRACK_START, t.fxType);
             }
 
             cursor = { t: 0, s: 0, c: 0 }; editHalf = 0; currentStep = 0;
@@ -1149,57 +1182,15 @@
     const scopeCtx = scopeCanvas.getContext('2d');
     const scopeSourceCanvas = document.createElement('canvas');
 
-    function alignScopeMidlineToTitleBottom() {
-        const scopeContainer = document.getElementById('master-scope-container');
-        const titleCanvas = document.getElementById('title-dot-matrix');
-        const header = document.getElementById('glitch-header');
-        if (!scopeContainer || !titleCanvas || !header) return;
-
-        // Reset previous offset before re-measuring to avoid accumulating transforms.
-        scopeContainer.style.transform = 'translateY(0px)';
-
-        const headerRect = header.getBoundingClientRect();
-        const titleRect = titleCanvas.getBoundingClientRect();
-        const scopeRect = scopeContainer.getBoundingClientRect();
-        const desiredCenterY = titleRect.bottom - headerRect.top;
-        const currentTop = scopeRect.top - headerRect.top;
-        const targetTop = desiredCenterY - scopeRect.height / 2;
-        const offsetY = targetTop - currentTop;
-
-        scopeContainer.style.transform = `translateY(${offsetY}px)`;
-    }
-
-    function alignScopeRightToLastTrack() {
-        masterScopeAnimation.align({ lastTrackIndex: NUM_TRACKS - 1 });
-        return;
-
-        const scopeContainer = document.getElementById('master-scope-container');
-        const header = document.getElementById('glitch-header');
-        const lastTrack = document.getElementById(`track-${NUM_TRACKS - 1}`);
-        if (!scopeContainer || !header || !lastTrack) return;
-
-        const headerRect = header.getBoundingClientRect();
-        const trackRect = lastTrack.getBoundingClientRect();
-        scopeContainer.style.left = `${trackRect.right - headerRect.left - scopeContainer.offsetWidth}px`;
-        scopeContainer.style.right = 'auto';
-    }
-    
     function resizeScope() {
-        masterScopeAnimation.resize({ lastTrackIndex: NUM_TRACKS - 1 });
-        return;
-
-        alignScopeRightToLastTrack();
-        alignScopeMidlineToTitleBottom();
-        scopeCanvas.width = scopeCanvas.clientWidth; scopeCanvas.height = scopeCanvas.clientHeight;
-        scopeSourceCanvas.width = scopeCanvas.width; scopeSourceCanvas.height = scopeCanvas.height;
+        masterScopeAnimation.resize();
     }
 
-    document.getElementById('workspace').addEventListener('scroll', resizeScope);
     window.addEventListener('resize', resizeScope);
     resizeScope();
-    const headerResizeObserver = new ResizeObserver(resizeScope);
-    headerResizeObserver.observe(document.getElementById('glitch-header'));
-    headerResizeObserver.observe(document.getElementById('workspace'));
+    const layoutResizeObserver = new ResizeObserver(resizeScope);
+    layoutResizeObserver.observe(document.getElementById('glitch-header'));
+    layoutResizeObserver.observe(document.getElementById('workspace'));
     window.addEventListener('load', resizeScope);
 
     let lastScopeDrawTime = 0;
@@ -1573,22 +1564,6 @@
         return ((step % NUM_STEPS) + NUM_STEPS) % NUM_STEPS;
     }
 
-    function syncWorkspaceContentAlignment() {
-        if (workspace.scrollLeft === 0) {
-            document.documentElement.style.setProperty('--workspace-content-left', `${stepCol.getBoundingClientRect().left}px`);
-        }
-
-        const lastTrack = document.getElementById(`track-${NUM_TRACKS - 1}`);
-        if (!lastTrack) return;
-
-        const workspaceRect = workspace.getBoundingClientRect();
-        const maxScrollLeft = workspace.scrollWidth - workspace.clientWidth;
-        const trackRightAtMaxScroll = lastTrack.getBoundingClientRect().right + workspace.scrollLeft - maxScrollLeft;
-        const rightInset = Math.max(0, workspaceRect.right - trackRightAtMaxScroll);
-        document.documentElement.style.setProperty('--workspace-content-right', `${rightInset}px`);
-        alignScopeRightToLastTrack();
-    }
-    
     function changeNumSteps(newSteps) {
         newSteps = Math.max(4, Math.min(128, newSteps)); 
         if (newSteps === NUM_STEPS) return;
@@ -1622,9 +1597,6 @@
     });
 
     stepCol.innerHTML = '<div class="track-header" style="justify-content:center;">#</div>';
-    requestAnimationFrame(syncWorkspaceContentAlignment);
-    window.addEventListener('resize', syncWorkspaceContentAlignment);
-
     function renderTrack(t) {
         const track = tracks[t];
         let html = '';
@@ -1694,7 +1666,6 @@
                 return `<div class="cell ${stepIndex % 4 === 0 ? 'step-accent' : ''}" id="row-slot-${slot}" data-step="${stepIndex}">${stepIndex.toString().padStart(2, '0')}</div>`;
             }).join('');
         renderAll();
-        workspace.style.height = `${stepCol.scrollHeight}px`;
     }
 
     function updateSingleCell(trackIndex = cursor.t, stepIndex = cursor.s) {
@@ -1874,7 +1845,7 @@
                 if (track.type === 'AUDIO' && track.activeVolNode) {
                     track.activeVolNode.gain.setValueAtTime(track.muted ? 0 : track.volume / 100, audioCtx.currentTime);
                 } else if (track.type === 'FX') {
-                    const info = cursor.t === 10 ? fx1NodeInfo : fx2NodeInfo;
+                const info = cursor.t === FX_TRACK_START ? fx1NodeInfo : fx2NodeInfo;
                     info.output.gain.setValueAtTime(track.muted ? 0 : track.volume / 100, audioCtx.currentTime);
                 }
                 renderTrack(cursor.t); return;
@@ -1884,7 +1855,7 @@
                 if (track.type === 'AUDIO' && track.activeVolNode) {
                     track.activeVolNode.gain.setValueAtTime(track.muted ? 0 : track.volume / 100, audioCtx.currentTime);
                 } else if (track.type === 'FX') {
-                    const info = cursor.t === 10 ? fx1NodeInfo : fx2NodeInfo;
+                    const info = cursor.t === FX_TRACK_START ? fx1NodeInfo : fx2NodeInfo;
                     info.output.gain.setValueAtTime(track.muted ? 0 : track.volume / 100, audioCtx.currentTime);
                 }
                 renderTrack(cursor.t); return;
@@ -1911,7 +1882,7 @@
                         track.activeVolNode.gain.linearRampToValueAtTime(track.muted ? 0 : (track.volume / 100), audioCtx.currentTime + 0.01);
                     }
                 } else if (track.type === 'FX') {
-                    const info = cursor.t === 10 ? fx1NodeInfo : fx2NodeInfo;
+                    const info = cursor.t === FX_TRACK_START ? fx1NodeInfo : fx2NodeInfo;
                     info.output.gain.setValueAtTime(info.output.gain.value, audioCtx.currentTime);
                     info.output.gain.linearRampToValueAtTime(track.muted ? 0 : track.volume / 100, audioCtx.currentTime + 0.01);
                 }
@@ -1921,7 +1892,7 @@
 
         if (e.shiftKey) {
             let moved = false;
-            if (cursor.t < 10) { 
+            if (track.type === 'AUDIO') { 
                 if (e.key === 'ArrowUp') { track.send1 = Math.min(100, track.send1 + 5); moved = true; }
                 if (e.key === 'ArrowDown') { track.send1 = Math.max(0, track.send1 - 5); moved = true; }
                 if (e.key === 'ArrowRight') { track.send2 = Math.min(100, track.send2 + 5); moved = true; }
@@ -1932,7 +1903,7 @@
                 if (e.key === 'ArrowDown') { track.p1 = Math.max(0, track.p1 - 5); moved = true; }
                 if (e.key === 'ArrowRight') { track.p2 = Math.min(100, track.p2 + 5); moved = true; }
                 if (e.key === 'ArrowLeft') { track.p2 = Math.max(0, track.p2 - 5); moved = true; }
-                if (moved) updateFXParams(cursor.t - 10); 
+                if (moved) updateFXParams(cursor.t - FX_TRACK_START); 
             }
             if (moved) renderTrack(cursor.t);
             return; 
@@ -1985,7 +1956,7 @@
                 const fxTypes = ['OFF', 'LPF', 'HPF', 'DLY', 'DIST', 'RVB'];
                 let idx = fxTypes.indexOf(track.fxType);
                 track.fxType = fxTypes[(idx + 1) % fxTypes.length];
-                changeFX(cursor.t - 10, track.fxType); renderTrack(cursor.t);
+                changeFX(cursor.t - FX_TRACK_START, track.fxType); renderTrack(cursor.t);
             }
         }
         if (e.key === '-' && track.type === 'AUDIO' && track.mode === 'SLC') {

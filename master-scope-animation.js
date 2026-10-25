@@ -5,19 +5,11 @@ window.masterScopeAnimation = (() => {
 
     function align() {
         const container = document.getElementById('master-scope-container');
-        const header = document.getElementById('glitch-header');
-        const workspace = document.getElementById('workspace');
-        if (!container || !header || !workspace) return;
-        const availableHeight = header.clientHeight;
-        if (availableHeight <= 0) return;
-
-        const maxWidth = Math.min(window.innerWidth * 0.3, 300);
-        const width = Math.min(maxWidth, availableHeight * (4 / 3));
-        const rightOffset = header.getBoundingClientRect().right - workspace.getBoundingClientRect().right;
-        container.style.width = `${width}px`;
+        if (!container) return;
+        container.style.width = '100%';
         container.style.left = 'auto';
-        container.style.right = `${rightOffset}px`;
-        container.style.top = '0';
+        container.style.right = 'auto';
+        container.style.top = 'auto';
         container.style.transform = 'none';
     }
 
