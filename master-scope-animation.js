@@ -3,26 +3,13 @@ window.masterScopeAnimation = (() => {
     const scopeCtx = scopeCanvas.getContext('2d');
     const sourceCanvas = document.createElement('canvas');
 
-    function align({ lastTrackIndex }) {
+    function align() {
         const container = document.getElementById('master-scope-container');
-        const title = document.getElementById('title-dot-matrix');
-        const header = document.getElementById('glitch-header');
-        const lastTrack = document.getElementById(`track-${lastTrackIndex}`);
-        if (!container || !title || !header) return;
-
-        if (lastTrack) {
-            const headerRect = header.getBoundingClientRect();
-            const trackRect = lastTrack.getBoundingClientRect();
-            container.style.left = `${trackRect.right - headerRect.left - container.offsetWidth}px`;
-            container.style.right = 'auto';
-        }
-
-        container.style.transform = 'translateY(0px)';
-        const headerRect = header.getBoundingClientRect();
-        const titleRect = title.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
-        const targetTop = titleRect.bottom - headerRect.top - containerRect.height / 2;
-        container.style.transform = `translateY(${targetTop - (containerRect.top - headerRect.top)}px)`;
+        if (!container) return;
+        container.style.left = 'auto';
+        container.style.right = '20px';
+        container.style.top = '0';
+        container.style.transform = 'none';
     }
 
     function resize(state) {
