@@ -6,15 +6,17 @@ window.masterScopeAnimation = (() => {
     function align() {
         const container = document.getElementById('master-scope-container');
         const header = document.getElementById('glitch-header');
-        if (!container || !header) return;
+        const workspace = document.getElementById('workspace');
+        if (!container || !header || !workspace) return;
         const availableHeight = header.clientHeight;
         if (availableHeight <= 0) return;
 
         const maxWidth = Math.min(window.innerWidth * 0.3, 300);
         const width = Math.min(maxWidth, availableHeight * (4 / 3));
+        const rightOffset = header.getBoundingClientRect().right - workspace.getBoundingClientRect().right;
         container.style.width = `${width}px`;
         container.style.left = 'auto';
-        container.style.right = '20px';
+        container.style.right = `${rightOffset}px`;
         container.style.top = '0';
         container.style.transform = 'none';
     }

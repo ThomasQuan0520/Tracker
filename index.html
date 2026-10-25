@@ -1199,6 +1199,7 @@
     resizeScope();
     const headerResizeObserver = new ResizeObserver(resizeScope);
     headerResizeObserver.observe(document.getElementById('glitch-header'));
+    headerResizeObserver.observe(document.getElementById('workspace'));
     window.addEventListener('load', resizeScope);
 
     let lastScopeDrawTime = 0;
