@@ -183,7 +183,9 @@
             align-items: flex-start;
             gap: 8px;
             padding: 0;
-            width: 100%;
+            flex: 1 1 auto;
+            width: 0;
+            min-width: 0;
             background-color: transparent;
             color: var(--text-header);
             position: relative;
@@ -255,9 +257,8 @@
         }
         
         #shortcuts-toggle {
-            position: fixed;
-            right: 18px;
-            bottom: 18px;
+            position: static;
+            flex: 0 0 46px;
             width: 46px;
             height: 46px;
             border: 1px solid var(--text-header);
@@ -271,6 +272,14 @@
             z-index: 30;
         }
 
+        #status-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            min-width: 0;
+        }
+
         #shortcuts-toggle:hover,
         #shortcuts-toggle[aria-expanded="true"] {
             background: var(--text-header);
@@ -280,7 +289,8 @@
         #shortcuts-panel {
             position: fixed;
             right: 18px;
-            bottom: 74px;
+            top: 18px;
+            bottom: auto;
             width: min(720px, calc(100vw - 36px));
             max-height: min(480px, calc(100vh - 112px));
             display: none;
@@ -434,13 +444,16 @@
         <header id="glitch-header">
             <div id="header-right">
                 <canvas id="title-dot-matrix" width="360" height="140"></canvas>
-                <div id="top-bar">
-                    <div id="tempo-status">
-                        <canvas id="status-metronome" class="status-dot-matrix" width="44" height="28"></canvas>
-                        <canvas id="status-bpm-value" class="status-dot-matrix" width="52" height="32"></canvas>
+                <div id="status-controls">
+                    <div id="top-bar">
+                        <div id="tempo-status">
+                            <canvas id="status-metronome" class="status-dot-matrix" width="44" height="28"></canvas>
+                            <canvas id="status-bpm-value" class="status-dot-matrix" width="52" height="32"></canvas>
+                        </div>
+                        <canvas id="status-steps" class="status-dot-matrix" width="80" height="28"></canvas>
+                        <canvas id="status-preset" class="status-dot-matrix" width="560" height="28"></canvas>
                     </div>
-                    <canvas id="status-steps" class="status-dot-matrix" width="80" height="28"></canvas>
-                    <canvas id="status-preset" class="status-dot-matrix" width="560" height="28"></canvas>
+                    <button id="shortcuts-toggle" type="button" aria-expanded="false" aria-controls="shortcuts-panel">KEYS</button>
                 </div>
             </div>
             <div id="master-scope-container">
@@ -449,7 +462,6 @@
         </header>
     </div>
     
-    <button id="shortcuts-toggle" type="button" aria-expanded="false" aria-controls="shortcuts-panel">KEYS</button>
     <aside id="shortcuts-panel" aria-label="Keyboard shortcuts">
         <button id="lang-toggle" type="button">EN / 中文</button>
         <div id="shortcuts-container"></div>
@@ -542,6 +554,12 @@
         const isOpen = forceOpen ?? !panel.classList.contains('is-open');
         panel.classList.toggle('is-open', isOpen);
         toggle.setAttribute('aria-expanded', String(isOpen));
+        if (isOpen) {
+            const buttonRect = toggle.getBoundingClientRect();
+            const panelTop = Math.min(buttonRect.top, window.innerHeight - panel.offsetHeight - 12);
+            panel.style.right = `${Math.max(12, window.innerWidth - buttonRect.right)}px`;
+            panel.style.top = `${Math.max(12, panelTop)}px`;
+        }
     }
     
     function truncateStatusText(canvas, text, fontSize, horizontalPadding = 12) {
