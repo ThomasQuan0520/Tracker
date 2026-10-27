@@ -1,3 +1,19 @@
+# Docker Deployment
+
+The repository includes a `Dockerfile` and `compose.yaml`. From the project directory, build and start the tracker with:
+
+```sh
+docker compose up --build -d
+```
+
+Open `http://localhost:3000`. The container serves the webpage, audio files, fonts, and the `/api/packs` and `/api/presets` APIs. To use a different host port, set `PORT` when starting Compose:
+
+```sh
+PORT=8080 docker compose up --build -d
+```
+
+Then open `http://localhost:8080`. Stop the container with `docker compose down`.
+
 # Baota Node Deployment
 
 The tracker needs the Node server in `server.js` running in production. It serves the webpage, audio files, and the `/api/packs` and `/api/presets` browser APIs. Do not configure the site as a PHP static site.
