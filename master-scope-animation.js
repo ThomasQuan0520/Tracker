@@ -51,31 +51,29 @@ window.masterScopeAnimation = (() => {
         const height = scopeCanvas.height;
         const sourceCtx = sourceCanvas.getContext('2d');
         const centerX = width / 2;
-        const pressPhase = (timestamp % 1400) / 1400;
-        const pressProgress = pressPhase < 0.3
-            ? pressPhase / 0.3
-            : pressPhase < 0.48
+        const phase = (timestamp % 1500) / 1500;
+        const pressProgress = phase < 0.36
+            ? phase / 0.36
+            : phase < 0.52
                 ? 1
-                : pressPhase < 0.78
-                    ? 1 - (pressPhase - 0.48) / 0.3
+                : phase < 0.82
+                    ? 1 - (phase - 0.52) / 0.3
                     : 0;
         const easedPress = pressProgress * pressProgress * (3 - 2 * pressProgress);
-        const keyTop = height * (0.72 + easedPress * 0.035);
-        const fingerTip = keyTop - height * 0.015;
+        const keyWidth = width * 0.46;
+        const keyHeight = height * 0.13;
+        const keyX = centerX - keyWidth / 2;
+        const baseY = height * 0.78;
+        const pressDepth = height * 0.035 * easedPress;
+        const keyY = baseY + pressDepth;
+        const fingerX = centerX;
+        const fingerTip = keyY - height * 0.012;
 
         sourceCtx.clearRect(0, 0, width, height);
         sourceCtx.fillStyle = '#FFFFFF';
-        sourceCtx.textAlign = 'center';
-        sourceCtx.textBaseline = 'middle';
-        sourceCtx.font = `bold ${Math.max(10, height * 0.11)}px monospace`;
-        sourceCtx.fillText('PRESS SPACE', centerX, height * 0.14);
 
-        const keyWidth = width * 0.48;
-        const keyHeight = height * 0.15;
-        const keyX = centerX - keyWidth / 2;
-        const keyY = keyTop;
-        const cornerRadius = Math.min(height * 0.035, keyHeight / 3);
-        sourceCtx.lineWidth = Math.max(2, height * 0.012);
+        const cornerRadius = Math.min(height * 0.025, keyHeight / 3);
+        sourceCtx.lineWidth = Math.max(2, height * 0.014);
         sourceCtx.beginPath();
         sourceCtx.moveTo(keyX + cornerRadius, keyY);
         sourceCtx.lineTo(keyX + keyWidth - cornerRadius, keyY);
@@ -90,28 +88,39 @@ window.masterScopeAnimation = (() => {
 
         sourceCtx.lineCap = 'round';
         sourceCtx.lineJoin = 'round';
-        sourceCtx.lineWidth = height * 0.075;
+        sourceCtx.lineWidth = height * 0.07;
+
         sourceCtx.beginPath();
-        sourceCtx.moveTo(centerX, height * 0.4);
-        sourceCtx.lineTo(centerX, fingerTip);
+        sourceCtx.moveTo(fingerX - height * 0.075, height * 0.34);
+        sourceCtx.quadraticCurveTo(fingerX - height * 0.11, height * 0.48, fingerX - height * 0.085, height * 0.59);
+        sourceCtx.quadraticCurveTo(fingerX - height * 0.07, height * 0.65, fingerX - height * 0.025, height * 0.66);
+        sourceCtx.quadraticCurveTo(fingerX + height * 0.08, height * 0.67, fingerX + height * 0.105, height * 0.59);
+        sourceCtx.lineTo(fingerX + height * 0.12, height * 0.52);
         sourceCtx.stroke();
 
-        sourceCtx.lineWidth = height * 0.16;
+        sourceCtx.lineWidth = height * 0.09;
         sourceCtx.beginPath();
-        sourceCtx.moveTo(centerX, height * 0.48);
-        sourceCtx.lineTo(centerX - height * 0.025, height * 0.56);
+        sourceCtx.moveTo(fingerX, height * 0.57);
+        sourceCtx.lineTo(fingerX, fingerTip);
         sourceCtx.stroke();
 
-        sourceCtx.lineWidth = height * 0.065;
+        sourceCtx.lineWidth = height * 0.055;
         sourceCtx.beginPath();
-        sourceCtx.moveTo(centerX - height * 0.11, height * 0.48);
-        sourceCtx.lineTo(centerX - height * 0.16, height * 0.53);
-        sourceCtx.moveTo(centerX - height * 0.07, height * 0.55);
-        sourceCtx.lineTo(centerX + height * 0.07, height * 0.55);
+        sourceCtx.moveTo(fingerX - height * 0.045, height * 0.58);
+        sourceCtx.quadraticCurveTo(fingerX - height * 0.11, height * 0.55, fingerX - height * 0.13, height * 0.49);
+        sourceCtx.moveTo(fingerX + height * 0.035, height * 0.59);
+        sourceCtx.quadraticCurveTo(fingerX + height * 0.12, height * 0.58, fingerX + height * 0.14, height * 0.51);
+        sourceCtx.moveTo(fingerX + height * 0.065, height * 0.61);
+        sourceCtx.quadraticCurveTo(fingerX + height * 0.15, height * 0.61, fingerX + height * 0.17, height * 0.55);
         sourceCtx.stroke();
 
-        sourceCtx.font = `bold ${Math.max(8, height * 0.07)}px monospace`;
-        sourceCtx.fillText('SPACE', centerX, keyY + keyHeight * 0.58);
+        sourceCtx.lineWidth = height * 0.07;
+        sourceCtx.beginPath();
+        sourceCtx.moveTo(fingerX - height * 0.07, height * 0.43);
+        sourceCtx.quadraticCurveTo(fingerX - height * 0.18, height * 0.5, fingerX - height * 0.15, height * 0.56);
+        sourceCtx.quadraticCurveTo(fingerX - height * 0.13, height * 0.6, fingerX - height * 0.09, height * 0.59);
+        sourceCtx.stroke();
+
         drawDotMatrix(scopeCanvas, sourceCanvas, breathingAmount);
     }
 

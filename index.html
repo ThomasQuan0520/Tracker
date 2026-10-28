@@ -521,24 +521,24 @@
     
     const shortcuts = {
         en: [
-            { label: 'Navigation', text: 'Arrow Up / Arrow Down: Move step | Arrow Left / Arrow Right: Move track or select column | Ctrl/Cmd+Arrow Left / Arrow Right: Change pattern (previous/next)' },
+            { label: 'Navigation', text: 'Arrow Up / Arrow Down: Move step | Arrow Left / Arrow Right: Move track or select column | Ctrl+Arrow Left / Arrow Right: Change pattern (previous/next)' },
             { label: 'Playback', text: 'Space: Play / Stop | [: Decrease BPM | ]: Increase BPM' },
-            { label: 'Edit', text: 'Z-M / Q-I: Insert notes | 0-9: Set velocity (two-digit entry) | Del / Backspace: Clear note | Ctrl/Cmd+Backspace: Clear current pattern' },
-            { label: 'Samples', text: 'Enter: Open local sample file dialog | Ctrl/Cmd+Enter: Browse server packs | Pack browser: Type filter, Backspace delete filter, Up/Down select, PageUp/PageDown jump, Home/End first/last, Enter load, Esc close' },
-            { label: 'File', text: 'Ctrl/Cmd+S: Export project (save) | Ctrl/Cmd+O: Browse server presets | Ctrl/Cmd+L: Load local autosave' },
+            { label: 'Edit', text: 'Z-M / Q-I: Insert notes | 0-9: Set velocity (two-digit entry) | Del / Backspace: Clear note | Ctrl+Backspace: Clear current pattern' },
+            { label: 'Samples', text: 'Enter: Open local sample file dialog | Ctrl+Enter: Browse server packs | Pack browser: Type filter, Backspace delete filter, Up/Down select, PageUp/PageDown jump, Home/End first/last, Enter load, Esc close' },
+            { label: 'File', text: 'Ctrl+S: Export project (save) | Ctrl+O: Browse server presets | Ctrl+L: Load local autosave' },
             { label: 'Presets', text: 'Preset browser: Up/Down select, PageUp/PageDown jump, Home/End first/last, Enter load, Esc close' },
-            { label: 'Control', text: 'Ctrl/Cmd+ArrowUp / ArrowDown: Track volume up/down | Ctrl/Cmd+]: Increase steps, Ctrl/Cmd+[: Decrease steps | Shift+Arrow keys: Adjust sends or FX params | \\ : Toggle mode (SMP/SLC) or cycle FX type | SLC mode: = Increase slices, - Decrease slices' },
-            { label: 'Mute', text: 'Ctrl/Cmd+M: Toggle mute | Esc: Close shortcut panel' }
+            { label: 'Control', text: 'Ctrl+ArrowUp / ArrowDown: Track volume up/down | Ctrl+]: Increase steps, Ctrl+[: Decrease steps | Shift+Arrow keys: Adjust sends or FX params | \\ : Toggle mode (SMP/SLC) or cycle FX type | SLC mode: = Increase slices, - Decrease slices' },
+            { label: 'Mute', text: 'Ctrl+M: Toggle mute | Esc: Close shortcut panel' }
         ],
         zh: [
-            { label: '导航', text: '↑ / ↓: 步进移动 | ← / →: 切换轨道或列 | Ctrl/Cmd+← / Ctrl/Cmd+→: 切换 Pattern（上一 / 下一）' },
+            { label: '导航', text: '↑ / ↓: 步进移动 | ← / →: 切换轨道或列 | Ctrl+← / Ctrl+→: 切换 Pattern（上一 / 下一）' },
             { label: '播放', text: '空格: 播放 / 停止 | [: BPM 减少 | ]: BPM 增加' },
-            { label: '编辑', text: 'Z-M / Q-I: 输入音符 | 0-9: 设置力度（两位输入） | Del / Backspace: 清除音符 | Ctrl/Cmd+Backspace: 清空当前 Pattern' },
-            { label: '采样', text: 'Enter: 打开本地采样文件选择 | Ctrl/Cmd+Enter: 浏览服务器采样包 | 采样浏览器：输入筛选，Backspace 删除筛选，↑/↓ 选择，PageUp/PageDown 跳转，Home/End 首尾，Enter 导入，Esc 关闭' },
-            { label: '文件', text: 'Ctrl/Cmd+S: 导出项目（保存） | Ctrl/Cmd+O: 浏览服务器预设 | Ctrl/Cmd+L: 加载本地自动保存' },
+            { label: '编辑', text: 'Z-M / Q-I: 输入音符 | 0-9: 设置力度（两位输入） | Del / Backspace: 清除音符 | Ctrl+Backspace: 清空当前 Pattern' },
+            { label: '采样', text: 'Enter: 打开本地采样文件选择 | Ctrl+Enter: 浏览服务器采样包 | 采样浏览器：输入筛选，Backspace 删除筛选，↑/↓ 选择，PageUp/PageDown 跳转，Home/End 首尾，Enter 导入，Esc 关闭' },
+            { label: '文件', text: 'Ctrl+S: 导出项目（保存） | Ctrl+O: 浏览服务器预设 | Ctrl+L: 加载本地自动保存' },
             { label: '预设', text: '预设浏览器：↑/↓ 选择，PageUp/PageDown 跳转，Home/End 首尾，Enter 加载，Esc 关闭' },
-            { label: '控制', text: 'Ctrl/Cmd+↑ / Ctrl/Cmd+↓: 提高/降低轨道音量 | Ctrl/Cmd+]: 增加步数, Ctrl/Cmd+[: 减少步数 | Shift+方向键: 调整发送量或效果参数 | \\ : 切换模式或循环效果类型 | SLC 模式：= 增加切片，- 减少切片' },
-            { label: '静音', text: 'Ctrl/Cmd+M: 静音切换 | Esc: 关闭快捷键面板' }
+            { label: '控制', text: 'Ctrl+↑ / Ctrl+↓: 提高/降低轨道音量 | Ctrl+]: 增加步数, Ctrl+[: 减少步数 | Shift+方向键: 调整发送量或效果参数 | \\ : 切换模式或循环效果类型 | SLC 模式：= 增加切片，- 减少切片' },
+            { label: '静音', text: 'Ctrl+M: 静音切换 | Esc: 关闭快捷键面板' }
         ]
     };
     
@@ -1826,7 +1826,7 @@
     }
 
     window.addEventListener('keydown', (e) => {
-        if (!e.repeat && (e.ctrlKey || e.metaKey) && e.code === 'KeyO') {
+        if (!e.repeat && e.ctrlKey && e.code === 'KeyO') {
             e.preventDefault();
             e.stopImmediatePropagation();
             openPresetBrowser();
@@ -1835,6 +1835,7 @@
 
     window.addEventListener('keydown', (e) => {
         if (e.repeat) return; 
+        if (e.metaKey) return;
         if (audioCtx.state === 'suspended') audioCtx.resume();
         if (presetBrowser.open) {
             handlePresetBrowserKey(e);
@@ -1845,7 +1846,7 @@
             return;
         }
 
-        if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Backspace', 'Delete'].includes(e.code) || e.shiftKey || e.ctrlKey || e.metaKey) {
+        if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Backspace', 'Delete'].includes(e.code) || e.shiftKey || e.ctrlKey) {
             const key = e.key.toLowerCase();
             if (!(key === 'r' || key === 's' || key === 'o' || key === 'l' || e.key === 'F12')) {
                 e.preventDefault(); 
@@ -1859,7 +1860,7 @@
             : cursor.s;
         const step = track.patterns[track.currentPattern][inputStep];
 
-        if (e.ctrlKey || e.metaKey) {
+        if (e.ctrlKey) {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 suppressEnterFileDialog = true;
@@ -1989,8 +1990,8 @@
                 renderTrackerViewport(stoppedStep);
             }
         }
-        if (!e.ctrlKey && !e.metaKey && e.key === '[') { bpm = Math.max(20, bpm - 1); updateStatusDisplay(); }
-        if (!e.ctrlKey && !e.metaKey && e.key === ']') { bpm = Math.min(300, bpm + 1); updateStatusDisplay(); }
+        if (!e.ctrlKey && e.key === '[') { bpm = Math.max(20, bpm - 1); updateStatusDisplay(); }
+        if (!e.ctrlKey && e.key === ']') { bpm = Math.min(300, bpm + 1); updateStatusDisplay(); }
 
         let moved = false;
         if (e.key === 'ArrowUp') { cursor.s = (cursor.s - 1 + NUM_STEPS) % NUM_STEPS; moved = true; }
@@ -2063,7 +2064,7 @@
             suppressEnterFileDialog = false;
             return;
         }
-        if (e.key === 'Enter' && !e.ctrlKey && !e.metaKey && tracks[cursor.t].type === 'AUDIO') {
+        if (e.key === 'Enter' && !e.ctrlKey && tracks[cursor.t].type === 'AUDIO') {
             document.getElementById('file-input').click();
         }
     });
@@ -2252,7 +2253,7 @@
             suppressEnterFileDialog = true;
             if (sample) loadServerSample(sample);
             return;
-        } else if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+        } else if (event.key.length === 1 && !event.ctrlKey && !event.altKey) {
             sampleBrowser.query += event.key;
             return filterSampleBrowser();
         } else return;
