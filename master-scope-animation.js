@@ -72,7 +72,7 @@ window.masterScopeAnimation = (() => {
         const spaceWidth = width * 0.36;
         const spaceX = centerX - spaceWidth / 2;
         const spaceY = height * 0.855 + height * 0.018 * easedPress;
-        const fingerTipRest = height * 0.46;
+        const fingerTipRest = height * 0.59;
         const fingerTip = fingerTipRest + (spaceY - fingerTipRest) * easedPress;
 
         sourceCtx.clearRect(0, 0, width, height);
@@ -96,13 +96,29 @@ window.masterScopeAnimation = (() => {
 
         const drawKey = (x, y, keyWidth, keyH, pressed = false) => {
             roundedRect(x, y, keyWidth, keyH, Math.min(height * 0.016, keyH * 0.28));
-            sourceCtx.lineWidth = keyStroke;
-            sourceCtx.stroke();
+            if (keyWidth > width * 0.1) {
+                sourceCtx.lineWidth = keyStroke;
+                sourceCtx.stroke();
+            } else {
+                sourceCtx.fill();
+                sourceCtx.save();
+                sourceCtx.globalCompositeOperation = 'destination-out';
+                sourceCtx.lineWidth = Math.max(2, keyStroke * 0.55);
+                sourceCtx.beginPath();
+                sourceCtx.moveTo(x + keyWidth * 0.25, y + keyH * 0.34);
+                sourceCtx.lineTo(x + keyWidth * 0.75, y + keyH * 0.34);
+                sourceCtx.stroke();
+                sourceCtx.restore();
+            }
             if (pressed) {
+                sourceCtx.save();
+                sourceCtx.globalCompositeOperation = 'destination-out';
+                sourceCtx.lineWidth = Math.max(2, keyStroke * 0.55);
                 sourceCtx.beginPath();
                 sourceCtx.moveTo(x + keyWidth * 0.18, y + keyH * 0.3);
                 sourceCtx.lineTo(x + keyWidth * 0.82, y + keyH * 0.3);
                 sourceCtx.stroke();
+                sourceCtx.restore();
             }
         };
 
@@ -123,43 +139,38 @@ window.masterScopeAnimation = (() => {
         drawKeyRow(3, keyTop + height * 0.18, width * 0.071, width * 0.23);
         drawKey(spaceX, spaceY, spaceWidth, keyHeight, easedPress > 0.7);
 
-        const palmTop = height * 0.31;
-        const palmBottom = height * 0.55;
-        const fingerWidth = height * 0.085;
-        sourceCtx.beginPath();
-        sourceCtx.moveTo(centerX - fingerWidth / 2, palmBottom - height * 0.08);
-        sourceCtx.lineTo(centerX - fingerWidth / 2, fingerTip - height * 0.025);
-        sourceCtx.quadraticCurveTo(centerX - fingerWidth / 2, fingerTip, centerX, fingerTip);
-        sourceCtx.quadraticCurveTo(centerX + fingerWidth / 2, fingerTip, centerX + fingerWidth / 2, fingerTip - height * 0.025);
-        sourceCtx.lineTo(centerX + fingerWidth / 2, palmBottom - height * 0.08);
-        sourceCtx.quadraticCurveTo(centerX + height * 0.13, palmTop + height * 0.07, centerX + height * 0.14, palmTop + height * 0.15);
-        sourceCtx.quadraticCurveTo(centerX + height * 0.15, palmTop + height * 0.22, centerX + height * 0.1, palmTop + height * 0.22);
-        sourceCtx.quadraticCurveTo(centerX + height * 0.14, palmTop + height * 0.29, centerX + height * 0.08, palmTop + height * 0.3);
-        sourceCtx.quadraticCurveTo(centerX + height * 0.12, palmTop + height * 0.37, centerX + height * 0.055, palmTop + height * 0.37);
-        sourceCtx.quadraticCurveTo(centerX + height * 0.07, palmBottom, centerX, palmBottom);
-        sourceCtx.quadraticCurveTo(centerX - height * 0.1, palmBottom, centerX - height * 0.12, palmTop + height * 0.29);
-        sourceCtx.quadraticCurveTo(centerX - height * 0.19, palmTop + height * 0.27, centerX - height * 0.16, palmTop + height * 0.2);
-        sourceCtx.quadraticCurveTo(centerX - height * 0.13, palmTop + height * 0.13, centerX - height * 0.07, palmTop + height * 0.16);
-        sourceCtx.quadraticCurveTo(centerX - height * 0.055, palmTop + height * 0.1, centerX - fingerWidth / 2, palmBottom - height * 0.08);
-        sourceCtx.closePath();
+        const fingerWidth = height * 0.075;
+        const palmWidth = height * 0.24;
+        const palmHeight = height * 0.16;
+        const palmX = centerX - palmWidth / 2;
+        const palmY = height * 0.37;
+        roundedRect(palmX, palmY, palmWidth, palmHeight, palmHeight * 0.42);
         sourceCtx.fill();
 
+        sourceCtx.lineCap = 'round';
+        sourceCtx.lineJoin = 'round';
+        sourceCtx.lineWidth = height * 0.07;
+        sourceCtx.beginPath();
+        sourceCtx.moveTo(centerX - palmWidth * 0.34, palmY + palmHeight * 0.47);
+        sourceCtx.quadraticCurveTo(centerX - palmWidth * 0.8, palmY + palmHeight * 0.2, centerX - palmWidth * 0.82, palmY + palmHeight * 0.62);
+        sourceCtx.stroke();
+
+        sourceCtx.lineWidth = fingerWidth;
+        sourceCtx.beginPath();
+        sourceCtx.moveTo(centerX, palmY + palmHeight * 0.9);
+        sourceCtx.lineTo(centerX, fingerTip);
+        sourceCtx.stroke();
+
+        sourceCtx.save();
         sourceCtx.globalCompositeOperation = 'destination-out';
         sourceCtx.lineWidth = Math.max(3, height * 0.018);
         sourceCtx.beginPath();
-        sourceCtx.moveTo(centerX - height * 0.09, palmTop + height * 0.25);
-        sourceCtx.quadraticCurveTo(centerX - height * 0.025, palmTop + height * 0.29, centerX + height * 0.035, palmTop + height * 0.27);
-        sourceCtx.moveTo(centerX - height * 0.075, palmTop + height * 0.32);
-        sourceCtx.quadraticCurveTo(centerX - height * 0.015, palmTop + height * 0.35, centerX + height * 0.035, palmTop + height * 0.34);
+        sourceCtx.moveTo(centerX - palmWidth * 0.22, palmY + palmHeight * 0.48);
+        sourceCtx.quadraticCurveTo(centerX - palmWidth * 0.03, palmY + palmHeight * 0.62, centerX + palmWidth * 0.2, palmY + palmHeight * 0.48);
+        sourceCtx.moveTo(centerX - palmWidth * 0.18, palmY + palmHeight * 0.73);
+        sourceCtx.quadraticCurveTo(centerX, palmY + palmHeight * 0.84, centerX + palmWidth * 0.19, palmY + palmHeight * 0.7);
         sourceCtx.stroke();
-        sourceCtx.globalCompositeOperation = 'source-over';
-
-        sourceCtx.strokeStyle = '#000000';
-        sourceCtx.lineWidth = Math.max(2, height * 0.009);
-        sourceCtx.beginPath();
-        sourceCtx.moveTo(centerX - fingerWidth * 0.32, palmBottom - height * 0.08);
-        sourceCtx.lineTo(centerX - fingerWidth * 0.32, fingerTip - height * 0.05);
-        sourceCtx.stroke();
+        sourceCtx.restore();
 
         const clickAge = phase >= 0.28
             ? (phase - 0.28) * cycleDuration
