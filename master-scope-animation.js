@@ -51,75 +51,108 @@ window.masterScopeAnimation = (() => {
         const height = scopeCanvas.height;
         const sourceCtx = sourceCanvas.getContext('2d');
         const centerX = width / 2;
-        const phase = (timestamp % 1500) / 1500;
-        const pressProgress = phase < 0.36
-            ? phase / 0.36
+        const cycleDuration = 1800;
+        const phase = (timestamp % cycleDuration) / cycleDuration;
+        const pressProgress = phase < 0.28
+            ? phase / 0.28
             : phase < 0.52
                 ? 1
-                : phase < 0.82
-                    ? 1 - (phase - 0.52) / 0.3
+                : phase < 0.78
+                    ? 1 - (phase - 0.52) / 0.26
                     : 0;
         const easedPress = pressProgress * pressProgress * (3 - 2 * pressProgress);
-        const keyWidth = width * 0.46;
-        const keyHeight = height * 0.13;
-        const keyX = centerX - keyWidth / 2;
-        const baseY = height * 0.78;
+        const keyTop = height * 0.74;
+        const keyHeight = height * 0.15;
+        const keyWidth = width * 0.44;
+        const sideKeyWidth = width * 0.09;
+        const keyGap = width * 0.018;
         const pressDepth = height * 0.035 * easedPress;
-        const keyY = baseY + pressDepth;
+        const spaceY = keyTop + pressDepth;
+        const keyboardWidth = keyWidth + sideKeyWidth * 4 + keyGap * 4;
+        const keyboardLeft = centerX - keyboardWidth / 2;
+        const spaceX = centerX - keyWidth / 2;
         const fingerX = centerX;
-        const fingerTip = keyY - height * 0.012;
+        const fingerStartY = height * 0.32;
+        const fingerRestY = keyTop - height * 0.035;
+        const fingerTip = fingerStartY + (fingerRestY - fingerStartY) * easedPress;
 
         sourceCtx.clearRect(0, 0, width, height);
         sourceCtx.fillStyle = '#FFFFFF';
 
-        const cornerRadius = Math.min(height * 0.025, keyHeight / 3);
-        sourceCtx.lineWidth = Math.max(2, height * 0.014);
-        sourceCtx.beginPath();
-        sourceCtx.moveTo(keyX + cornerRadius, keyY);
-        sourceCtx.lineTo(keyX + keyWidth - cornerRadius, keyY);
-        sourceCtx.quadraticCurveTo(keyX + keyWidth, keyY, keyX + keyWidth, keyY + cornerRadius);
-        sourceCtx.lineTo(keyX + keyWidth, keyY + keyHeight - cornerRadius);
-        sourceCtx.quadraticCurveTo(keyX + keyWidth, keyY + keyHeight, keyX + keyWidth - cornerRadius, keyY + keyHeight);
-        sourceCtx.lineTo(keyX + cornerRadius, keyY + keyHeight);
-        sourceCtx.quadraticCurveTo(keyX, keyY + keyHeight, keyX, keyY + keyHeight - cornerRadius);
-        sourceCtx.lineTo(keyX, keyY + cornerRadius);
-        sourceCtx.quadraticCurveTo(keyX, keyY, keyX + cornerRadius, keyY);
-        sourceCtx.stroke();
+        const drawKey = (x, y, keyW, keyH, pressed = false) => {
+            const cornerRadius = Math.min(height * 0.025, keyH / 3);
+            sourceCtx.lineWidth = Math.max(2, height * 0.012);
+            sourceCtx.beginPath();
+            sourceCtx.moveTo(x + cornerRadius, y);
+            sourceCtx.lineTo(x + keyW - cornerRadius, y);
+            sourceCtx.quadraticCurveTo(x + keyW, y, x + keyW, y + cornerRadius);
+            sourceCtx.lineTo(x + keyW, y + keyH - cornerRadius);
+            sourceCtx.quadraticCurveTo(x + keyW, y + keyH, x + keyW - cornerRadius, y + keyH);
+            sourceCtx.lineTo(x + cornerRadius, y + keyH);
+            sourceCtx.quadraticCurveTo(x, y + keyH, x, y + keyH - cornerRadius);
+            sourceCtx.lineTo(x, y + cornerRadius);
+            sourceCtx.quadraticCurveTo(x, y, x + cornerRadius, y);
+            sourceCtx.stroke();
+            if (pressed) {
+                sourceCtx.beginPath();
+                sourceCtx.moveTo(x + keyW * 0.18, y + keyH * 0.32);
+                sourceCtx.lineTo(x + keyW * 0.82, y + keyH * 0.32);
+                sourceCtx.stroke();
+            }
+        };
 
         sourceCtx.lineCap = 'round';
         sourceCtx.lineJoin = 'round';
-        sourceCtx.lineWidth = height * 0.07;
+        for (let key = 0; key < 2; key++) {
+            const leftX = keyboardLeft + key * (sideKeyWidth + keyGap);
+            const rightX = spaceX + keyWidth + keyGap + key * (sideKeyWidth + keyGap);
+            drawKey(leftX, keyTop, sideKeyWidth, keyHeight);
+            drawKey(rightX, keyTop, sideKeyWidth, keyHeight);
+        }
+        drawKey(spaceX, spaceY, keyWidth, keyHeight, easedPress > 0.7);
 
+        sourceCtx.lineWidth = height * 0.085;
         sourceCtx.beginPath();
-        sourceCtx.moveTo(fingerX - height * 0.075, height * 0.34);
-        sourceCtx.quadraticCurveTo(fingerX - height * 0.11, height * 0.48, fingerX - height * 0.085, height * 0.59);
-        sourceCtx.quadraticCurveTo(fingerX - height * 0.07, height * 0.65, fingerX - height * 0.025, height * 0.66);
-        sourceCtx.quadraticCurveTo(fingerX + height * 0.08, height * 0.67, fingerX + height * 0.105, height * 0.59);
-        sourceCtx.lineTo(fingerX + height * 0.12, height * 0.52);
+        sourceCtx.moveTo(fingerX - height * 0.09, height * 0.53);
+        sourceCtx.quadraticCurveTo(fingerX - height * 0.1, height * 0.68, fingerX + height * 0.07, height * 0.68);
+        sourceCtx.quadraticCurveTo(fingerX + height * 0.15, height * 0.67, fingerX + height * 0.15, height * 0.57);
         sourceCtx.stroke();
 
         sourceCtx.lineWidth = height * 0.09;
         sourceCtx.beginPath();
-        sourceCtx.moveTo(fingerX, height * 0.57);
+        sourceCtx.moveTo(fingerX, fingerStartY);
         sourceCtx.lineTo(fingerX, fingerTip);
         sourceCtx.stroke();
 
         sourceCtx.lineWidth = height * 0.055;
         sourceCtx.beginPath();
-        sourceCtx.moveTo(fingerX - height * 0.045, height * 0.58);
-        sourceCtx.quadraticCurveTo(fingerX - height * 0.11, height * 0.55, fingerX - height * 0.13, height * 0.49);
-        sourceCtx.moveTo(fingerX + height * 0.035, height * 0.59);
-        sourceCtx.quadraticCurveTo(fingerX + height * 0.12, height * 0.58, fingerX + height * 0.14, height * 0.51);
-        sourceCtx.moveTo(fingerX + height * 0.065, height * 0.61);
-        sourceCtx.quadraticCurveTo(fingerX + height * 0.15, height * 0.61, fingerX + height * 0.17, height * 0.55);
+        sourceCtx.moveTo(fingerX - height * 0.07, height * 0.56);
+        sourceCtx.quadraticCurveTo(fingerX - height * 0.14, height * 0.59, fingerX - height * 0.11, height * 0.64);
+        sourceCtx.moveTo(fingerX + height * 0.07, height * 0.57);
+        sourceCtx.quadraticCurveTo(fingerX + height * 0.13, height * 0.6, fingerX + height * 0.1, height * 0.64);
         sourceCtx.stroke();
 
-        sourceCtx.lineWidth = height * 0.07;
-        sourceCtx.beginPath();
-        sourceCtx.moveTo(fingerX - height * 0.07, height * 0.43);
-        sourceCtx.quadraticCurveTo(fingerX - height * 0.18, height * 0.5, fingerX - height * 0.15, height * 0.56);
-        sourceCtx.quadraticCurveTo(fingerX - height * 0.13, height * 0.6, fingerX - height * 0.09, height * 0.59);
-        sourceCtx.stroke();
+        const clickAge = phase >= 0.28
+            ? (phase - 0.28) * cycleDuration
+            : (phase + 1 - 0.28) * cycleDuration;
+        if (clickAge < 480) {
+            const particleCount = 12;
+            const fade = 1 - clickAge / 480;
+            for (let particle = 0; particle < particleCount; particle++) {
+                const angle = particle / particleCount * Math.PI * 2 + 0.18;
+                const distance = height * (0.035 + clickAge * 0.00016);
+                const x = centerX + Math.cos(angle) * distance;
+                const y = keyTop + Math.sin(angle) * distance * 0.65;
+                const size = height * (0.022 + (particle % 3) * 0.004) * fade;
+                sourceCtx.globalAlpha = fade;
+                sourceCtx.lineWidth = Math.max(2, size);
+                sourceCtx.beginPath();
+                sourceCtx.moveTo(x - Math.cos(angle) * size, y - Math.sin(angle) * size);
+                sourceCtx.lineTo(x + Math.cos(angle) * size, y + Math.sin(angle) * size);
+                sourceCtx.stroke();
+            }
+            sourceCtx.globalAlpha = 1;
+        }
 
         drawDotMatrix(scopeCanvas, sourceCanvas, breathingAmount);
     }
