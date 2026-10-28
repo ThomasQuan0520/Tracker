@@ -4,7 +4,8 @@
   "private": true,
   "description": "CYMO tracker server and pack browser API",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "deploy": "sh ./deploy.sh"
   },
   "engines": {
     "node": ">=18"
