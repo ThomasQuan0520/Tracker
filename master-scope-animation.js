@@ -46,6 +46,75 @@ window.masterScopeAnimation = (() => {
         drawDotMatrix(scopeCanvas, sourceCanvas, breathingAmount);
     }
 
+    function renderSpacePrompt({ timestamp, breathingAmount }) {
+        const width = scopeCanvas.width;
+        const height = scopeCanvas.height;
+        const sourceCtx = sourceCanvas.getContext('2d');
+        const centerX = width / 2;
+        const pressPhase = (timestamp % 1400) / 1400;
+        const pressProgress = pressPhase < 0.3
+            ? pressPhase / 0.3
+            : pressPhase < 0.48
+                ? 1
+                : pressPhase < 0.78
+                    ? 1 - (pressPhase - 0.48) / 0.3
+                    : 0;
+        const easedPress = pressProgress * pressProgress * (3 - 2 * pressProgress);
+        const keyTop = height * (0.72 + easedPress * 0.035);
+        const fingerTip = keyTop - height * 0.015;
+
+        sourceCtx.clearRect(0, 0, width, height);
+        sourceCtx.fillStyle = '#FFFFFF';
+        sourceCtx.textAlign = 'center';
+        sourceCtx.textBaseline = 'middle';
+        sourceCtx.font = `bold ${Math.max(10, height * 0.11)}px monospace`;
+        sourceCtx.fillText('PRESS SPACE', centerX, height * 0.14);
+
+        const keyWidth = width * 0.48;
+        const keyHeight = height * 0.15;
+        const keyX = centerX - keyWidth / 2;
+        const keyY = keyTop;
+        const cornerRadius = Math.min(height * 0.035, keyHeight / 3);
+        sourceCtx.lineWidth = Math.max(2, height * 0.012);
+        sourceCtx.beginPath();
+        sourceCtx.moveTo(keyX + cornerRadius, keyY);
+        sourceCtx.lineTo(keyX + keyWidth - cornerRadius, keyY);
+        sourceCtx.quadraticCurveTo(keyX + keyWidth, keyY, keyX + keyWidth, keyY + cornerRadius);
+        sourceCtx.lineTo(keyX + keyWidth, keyY + keyHeight - cornerRadius);
+        sourceCtx.quadraticCurveTo(keyX + keyWidth, keyY + keyHeight, keyX + keyWidth - cornerRadius, keyY + keyHeight);
+        sourceCtx.lineTo(keyX + cornerRadius, keyY + keyHeight);
+        sourceCtx.quadraticCurveTo(keyX, keyY + keyHeight, keyX, keyY + keyHeight - cornerRadius);
+        sourceCtx.lineTo(keyX, keyY + cornerRadius);
+        sourceCtx.quadraticCurveTo(keyX, keyY, keyX + cornerRadius, keyY);
+        sourceCtx.stroke();
+
+        sourceCtx.lineCap = 'round';
+        sourceCtx.lineJoin = 'round';
+        sourceCtx.lineWidth = height * 0.075;
+        sourceCtx.beginPath();
+        sourceCtx.moveTo(centerX, height * 0.4);
+        sourceCtx.lineTo(centerX, fingerTip);
+        sourceCtx.stroke();
+
+        sourceCtx.lineWidth = height * 0.16;
+        sourceCtx.beginPath();
+        sourceCtx.moveTo(centerX, height * 0.48);
+        sourceCtx.lineTo(centerX - height * 0.025, height * 0.56);
+        sourceCtx.stroke();
+
+        sourceCtx.lineWidth = height * 0.065;
+        sourceCtx.beginPath();
+        sourceCtx.moveTo(centerX - height * 0.11, height * 0.48);
+        sourceCtx.lineTo(centerX - height * 0.16, height * 0.53);
+        sourceCtx.moveTo(centerX - height * 0.07, height * 0.55);
+        sourceCtx.lineTo(centerX + height * 0.07, height * 0.55);
+        sourceCtx.stroke();
+
+        sourceCtx.font = `bold ${Math.max(8, height * 0.07)}px monospace`;
+        sourceCtx.fillText('SPACE', centerX, keyY + keyHeight * 0.58);
+        drawDotMatrix(scopeCanvas, sourceCanvas, breathingAmount);
+    }
+
     function renderTearEye({ timestamp, breathingAmount }) {
         const width = scopeCanvas.width;
         const height = scopeCanvas.height;
@@ -257,5 +326,5 @@ window.masterScopeAnimation = (() => {
         scopeCtx.clearRect(0, 0, scopeCanvas.width, scopeCanvas.height);
     }
 
-    return { resize, align, renderWaveform, renderTearEye, renderSubwayTunnel, renderLunarWaves, clear };
+    return { resize, align, renderWaveform, renderSpacePrompt, renderTearEye, renderSubwayTunnel, renderLunarWaves, clear };
 })();

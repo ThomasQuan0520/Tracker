@@ -757,6 +757,7 @@
     let NUM_STEPS = 16;
     let bpm = 120;
     let isPlaying = false;
+    let hasStartedPlayback = false;
     let currentPresetName = '';
     let titleBreathingAmount = 0;
     let breathingPhase = 0;
@@ -1473,8 +1474,9 @@
             }
             const average = sum / scopeDataArray.length;
             const threshold = 0.01;
-            // 当检测到主输出有声音时才进行渲染
-            if (average > threshold) {
+            if (!hasStartedPlayback) {
+                masterScopeAnimation.renderSpacePrompt({ timestamp, breathingAmount: titleBreathingAmount });
+            } else if (average > threshold) {
                 const animationMode = Math.floor(completedRounds / 4) % 4;
                 if (animationMode === 0) {
                     renderMasterScope(); 
@@ -1966,6 +1968,7 @@
         }
 
         if (e.code === 'Space') {
+            hasStartedPlayback = true;
             isPlaying = !isPlaying;
             updateStatusDisplay();
             editHalf = 0; 
