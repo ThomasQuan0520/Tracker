@@ -61,116 +61,17 @@ window.masterScopeAnimation = (() => {
                     ? 1 - (phase - 0.52) / 0.26
                     : 0;
         const easedPress = pressProgress * pressProgress * (3 - 2 * pressProgress);
-        const keyHeight = height * 0.065;
-        const keyTop = height * 0.65;
-        const keyGap = width * 0.014;
-        const keyStroke = Math.max(3, height * 0.026);
-        const keyboardX = width * 0.1;
-        const keyboardWidth = width * 0.8;
-        const keyboardY = height * 0.62;
-        const keyboardHeight = height * 0.34;
-        const spaceWidth = width * 0.36;
-        const spaceX = centerX - spaceWidth / 2;
-        const spaceY = height * 0.855 + height * 0.018 * easedPress;
-        const fingerTipRest = height * 0.59;
-        const fingerTip = fingerTipRest + (spaceY - fingerTipRest) * easedPress;
-
         sourceCtx.clearRect(0, 0, width, height);
         sourceCtx.fillStyle = '#FFFFFF';
-        sourceCtx.lineCap = 'round';
-        sourceCtx.lineJoin = 'round';
+        sourceCtx.textAlign = 'center';
+        sourceCtx.textBaseline = 'middle';
 
-        const roundedRect = (x, y, rectWidth, rectHeight, radius) => {
-            sourceCtx.beginPath();
-            sourceCtx.moveTo(x + radius, y);
-            sourceCtx.lineTo(x + rectWidth - radius, y);
-            sourceCtx.quadraticCurveTo(x + rectWidth, y, x + rectWidth, y + radius);
-            sourceCtx.lineTo(x + rectWidth, y + rectHeight - radius);
-            sourceCtx.quadraticCurveTo(x + rectWidth, y + rectHeight, x + rectWidth - radius, y + rectHeight);
-            sourceCtx.lineTo(x + radius, y + rectHeight);
-            sourceCtx.quadraticCurveTo(x, y + rectHeight, x, y + rectHeight - radius);
-            sourceCtx.lineTo(x, y + radius);
-            sourceCtx.quadraticCurveTo(x, y, x + radius, y);
-            sourceCtx.closePath();
-        };
+        const keyTop = height * 0.72;
+        sourceCtx.font = `${height * 0.64}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
+        sourceCtx.fillText('⌨️', centerX, height * 0.79);
 
-        const drawKey = (x, y, keyWidth, keyH, pressed = false) => {
-            roundedRect(x, y, keyWidth, keyH, Math.min(height * 0.016, keyH * 0.28));
-            if (keyWidth > width * 0.1) {
-                sourceCtx.lineWidth = keyStroke;
-                sourceCtx.stroke();
-            } else {
-                sourceCtx.fill();
-                sourceCtx.save();
-                sourceCtx.globalCompositeOperation = 'destination-out';
-                sourceCtx.lineWidth = Math.max(2, keyStroke * 0.55);
-                sourceCtx.beginPath();
-                sourceCtx.moveTo(x + keyWidth * 0.25, y + keyH * 0.34);
-                sourceCtx.lineTo(x + keyWidth * 0.75, y + keyH * 0.34);
-                sourceCtx.stroke();
-                sourceCtx.restore();
-            }
-            if (pressed) {
-                sourceCtx.save();
-                sourceCtx.globalCompositeOperation = 'destination-out';
-                sourceCtx.lineWidth = Math.max(2, keyStroke * 0.55);
-                sourceCtx.beginPath();
-                sourceCtx.moveTo(x + keyWidth * 0.18, y + keyH * 0.3);
-                sourceCtx.lineTo(x + keyWidth * 0.82, y + keyH * 0.3);
-                sourceCtx.stroke();
-                sourceCtx.restore();
-            }
-        };
-
-        roundedRect(keyboardX, keyboardY, keyboardWidth, keyboardHeight, height * 0.035);
-        sourceCtx.lineWidth = keyStroke;
-        sourceCtx.stroke();
-
-        const drawKeyRow = (count, rowY, keyWidth, offset = 0) => {
-            const rowWidth = count * keyWidth + (count - 1) * keyGap;
-            const startX = centerX - rowWidth / 2 + offset;
-            for (let index = 0; index < count; index++) {
-                drawKey(startX + index * (keyWidth + keyGap), rowY, keyWidth, keyHeight);
-            }
-        };
-        drawKeyRow(10, keyTop, width * 0.061);
-        drawKeyRow(9, keyTop + height * 0.09, width * 0.067, width * 0.006);
-        drawKeyRow(3, keyTop + height * 0.18, width * 0.071, -width * 0.008);
-        drawKeyRow(3, keyTop + height * 0.18, width * 0.071, width * 0.23);
-        drawKey(spaceX, spaceY, spaceWidth, keyHeight, easedPress > 0.7);
-
-        const fingerWidth = height * 0.075;
-        const palmWidth = height * 0.24;
-        const palmHeight = height * 0.16;
-        const palmX = centerX - palmWidth / 2;
-        const palmY = height * 0.37;
-        roundedRect(palmX, palmY, palmWidth, palmHeight, palmHeight * 0.42);
-        sourceCtx.fill();
-
-        sourceCtx.lineCap = 'round';
-        sourceCtx.lineJoin = 'round';
-        sourceCtx.lineWidth = height * 0.07;
-        sourceCtx.beginPath();
-        sourceCtx.moveTo(centerX - palmWidth * 0.34, palmY + palmHeight * 0.47);
-        sourceCtx.quadraticCurveTo(centerX - palmWidth * 0.8, palmY + palmHeight * 0.2, centerX - palmWidth * 0.82, palmY + palmHeight * 0.62);
-        sourceCtx.stroke();
-
-        sourceCtx.lineWidth = fingerWidth;
-        sourceCtx.beginPath();
-        sourceCtx.moveTo(centerX, palmY + palmHeight * 0.9);
-        sourceCtx.lineTo(centerX, fingerTip);
-        sourceCtx.stroke();
-
-        sourceCtx.save();
-        sourceCtx.globalCompositeOperation = 'destination-out';
-        sourceCtx.lineWidth = Math.max(3, height * 0.018);
-        sourceCtx.beginPath();
-        sourceCtx.moveTo(centerX - palmWidth * 0.22, palmY + palmHeight * 0.48);
-        sourceCtx.quadraticCurveTo(centerX - palmWidth * 0.03, palmY + palmHeight * 0.62, centerX + palmWidth * 0.2, palmY + palmHeight * 0.48);
-        sourceCtx.moveTo(centerX - palmWidth * 0.18, palmY + palmHeight * 0.73);
-        sourceCtx.quadraticCurveTo(centerX, palmY + palmHeight * 0.84, centerX + palmWidth * 0.19, palmY + palmHeight * 0.7);
-        sourceCtx.stroke();
-        sourceCtx.restore();
+        sourceCtx.font = `${height * 0.43}px "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
+        sourceCtx.fillText('👇', centerX, height * (0.32 + easedPress * 0.23));
 
         const clickAge = phase >= 0.28
             ? (phase - 0.28) * cycleDuration
@@ -182,7 +83,7 @@ window.masterScopeAnimation = (() => {
                 const angle = particle / particleCount * Math.PI * 2 + 0.18;
                 const distance = height * (0.035 + clickAge * 0.00016);
                 const x = centerX + Math.cos(angle) * distance;
-                const y = keyTop + Math.sin(angle) * distance * 0.65;
+                const y = keyTop + Math.sin(angle) * distance * 0.45;
                 const size = height * (0.022 + (particle % 3) * 0.004) * fade;
                 sourceCtx.globalAlpha = fade;
                 sourceCtx.lineWidth = Math.max(2, size);
