@@ -23,7 +23,11 @@ printf 'Pushing %s to origin...\n' "$DEPLOY_BRANCH"
 git push origin "$DEPLOY_BRANCH"
 
 printf 'Updating %s on %s...\n' "$DEPLOY_PATH" "$DEPLOY_HOST"
-ssh -o BatchMode=no "$DEPLOY_HOST" "sh -s -- '$DEPLOY_PATH' '$DEPLOY_BRANCH'" <<'REMOTE'
+ssh \
+    -o BatchMode=no \
+    -o PubkeyAuthentication=no \
+    -o PreferredAuthentications=password,keyboard-interactive \
+    "$DEPLOY_HOST" "sh -s -- '$DEPLOY_PATH' '$DEPLOY_BRANCH'" <<'REMOTE'
 set -eu
 
 DEPLOY_PATH=$1
