@@ -1498,7 +1498,7 @@
 
     async function tryAutoLoadPreset() {
         try {
-            let listResp = await fetch('/api/presets');
+            let listResp = await fetch('api/presets');
             if (listResp.ok) {
                 const list = await listResp.json();
                 if (Array.isArray(list.presets) && list.presets.length > 0) {
@@ -2096,7 +2096,7 @@
     async function openPresetBrowser() {
         try {
             if (presetBrowser.presets.length === 0) {
-                const response = await fetch('/api/presets');
+                const response = await fetch('api/presets');
                 if (!response.ok) throw new Error('Preset lookup failed');
                 const data = await response.json();
                 presetBrowser.presets = data.presets;
@@ -2194,7 +2194,7 @@
 
         try {
             if (sampleBrowser.samples.length === 0) {
-                const response = await fetch('/api/packs');
+                const response = await fetch('api/packs');
                 if (!response.ok) throw new Error('Sample lookup failed');
                 const data = await response.json();
                 sampleBrowser.samples = data.samples;

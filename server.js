@@ -51,7 +51,7 @@ function serializeSample(samplePath) {
     return {
         name: path.basename(samplePath),
         path: relativePath,
-        url: `/${relativePath.split('/').map(encodeURIComponent).join('/')}`
+        url: relativePath.split('/').map(encodeURIComponent).join('/')
     };
 }
 
@@ -60,7 +60,7 @@ function serializePreset(presetPath) {
     return {
         name: path.basename(presetPath),
         path: relativePath,
-        url: `/${relativePath.split('/').map(encodeURIComponent).join('/')}`
+        url: relativePath.split('/').map(encodeURIComponent).join('/')
     };
 }
 

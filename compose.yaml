@@ -3,5 +3,5 @@ services:
     build: .
     container_name: cymo-tracker
     ports:
-      - "${PORT:-3000}:3000"
+      - "127.0.0.1:${PORT:-3000}:3000"
     restart: unless-stopped
