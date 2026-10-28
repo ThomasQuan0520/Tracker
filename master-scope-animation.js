@@ -61,75 +61,104 @@ window.masterScopeAnimation = (() => {
                     ? 1 - (phase - 0.52) / 0.26
                     : 0;
         const easedPress = pressProgress * pressProgress * (3 - 2 * pressProgress);
-        const keyTop = height * 0.74;
-        const keyHeight = height * 0.15;
-        const keyWidth = width * 0.44;
-        const sideKeyWidth = width * 0.09;
-        const keyGap = width * 0.018;
-        const pressDepth = height * 0.035 * easedPress;
-        const spaceY = keyTop + pressDepth;
-        const keyboardWidth = keyWidth + sideKeyWidth * 4 + keyGap * 4;
-        const keyboardLeft = centerX - keyboardWidth / 2;
-        const spaceX = centerX - keyWidth / 2;
-        const fingerX = centerX;
-        const fingerStartY = height * 0.32;
-        const fingerRestY = keyTop - height * 0.035;
-        const fingerTip = fingerStartY + (fingerRestY - fingerStartY) * easedPress;
+        const keyHeight = height * 0.065;
+        const keyTop = height * 0.65;
+        const keyGap = width * 0.014;
+        const keyStroke = Math.max(3, height * 0.026);
+        const keyboardX = width * 0.1;
+        const keyboardWidth = width * 0.8;
+        const keyboardY = height * 0.62;
+        const keyboardHeight = height * 0.34;
+        const spaceWidth = width * 0.36;
+        const spaceX = centerX - spaceWidth / 2;
+        const spaceY = height * 0.855 + height * 0.018 * easedPress;
+        const fingerTipRest = height * 0.46;
+        const fingerTip = fingerTipRest + (spaceY - fingerTipRest) * easedPress;
 
         sourceCtx.clearRect(0, 0, width, height);
         sourceCtx.fillStyle = '#FFFFFF';
+        sourceCtx.lineCap = 'round';
+        sourceCtx.lineJoin = 'round';
 
-        const drawKey = (x, y, keyW, keyH, pressed = false) => {
-            const cornerRadius = Math.min(height * 0.025, keyH / 3);
-            sourceCtx.lineWidth = Math.max(2, height * 0.012);
+        const roundedRect = (x, y, rectWidth, rectHeight, radius) => {
             sourceCtx.beginPath();
-            sourceCtx.moveTo(x + cornerRadius, y);
-            sourceCtx.lineTo(x + keyW - cornerRadius, y);
-            sourceCtx.quadraticCurveTo(x + keyW, y, x + keyW, y + cornerRadius);
-            sourceCtx.lineTo(x + keyW, y + keyH - cornerRadius);
-            sourceCtx.quadraticCurveTo(x + keyW, y + keyH, x + keyW - cornerRadius, y + keyH);
-            sourceCtx.lineTo(x + cornerRadius, y + keyH);
-            sourceCtx.quadraticCurveTo(x, y + keyH, x, y + keyH - cornerRadius);
-            sourceCtx.lineTo(x, y + cornerRadius);
-            sourceCtx.quadraticCurveTo(x, y, x + cornerRadius, y);
+            sourceCtx.moveTo(x + radius, y);
+            sourceCtx.lineTo(x + rectWidth - radius, y);
+            sourceCtx.quadraticCurveTo(x + rectWidth, y, x + rectWidth, y + radius);
+            sourceCtx.lineTo(x + rectWidth, y + rectHeight - radius);
+            sourceCtx.quadraticCurveTo(x + rectWidth, y + rectHeight, x + rectWidth - radius, y + rectHeight);
+            sourceCtx.lineTo(x + radius, y + rectHeight);
+            sourceCtx.quadraticCurveTo(x, y + rectHeight, x, y + rectHeight - radius);
+            sourceCtx.lineTo(x, y + radius);
+            sourceCtx.quadraticCurveTo(x, y, x + radius, y);
+            sourceCtx.closePath();
+        };
+
+        const drawKey = (x, y, keyWidth, keyH, pressed = false) => {
+            roundedRect(x, y, keyWidth, keyH, Math.min(height * 0.016, keyH * 0.28));
+            sourceCtx.lineWidth = keyStroke;
             sourceCtx.stroke();
             if (pressed) {
                 sourceCtx.beginPath();
-                sourceCtx.moveTo(x + keyW * 0.18, y + keyH * 0.32);
-                sourceCtx.lineTo(x + keyW * 0.82, y + keyH * 0.32);
+                sourceCtx.moveTo(x + keyWidth * 0.18, y + keyH * 0.3);
+                sourceCtx.lineTo(x + keyWidth * 0.82, y + keyH * 0.3);
                 sourceCtx.stroke();
             }
         };
 
-        sourceCtx.lineCap = 'round';
-        sourceCtx.lineJoin = 'round';
-        for (let key = 0; key < 2; key++) {
-            const leftX = keyboardLeft + key * (sideKeyWidth + keyGap);
-            const rightX = spaceX + keyWidth + keyGap + key * (sideKeyWidth + keyGap);
-            drawKey(leftX, keyTop, sideKeyWidth, keyHeight);
-            drawKey(rightX, keyTop, sideKeyWidth, keyHeight);
-        }
-        drawKey(spaceX, spaceY, keyWidth, keyHeight, easedPress > 0.7);
-
-        sourceCtx.lineWidth = height * 0.085;
-        sourceCtx.beginPath();
-        sourceCtx.moveTo(fingerX - height * 0.09, height * 0.53);
-        sourceCtx.quadraticCurveTo(fingerX - height * 0.1, height * 0.68, fingerX + height * 0.07, height * 0.68);
-        sourceCtx.quadraticCurveTo(fingerX + height * 0.15, height * 0.67, fingerX + height * 0.15, height * 0.57);
+        roundedRect(keyboardX, keyboardY, keyboardWidth, keyboardHeight, height * 0.035);
+        sourceCtx.lineWidth = keyStroke;
         sourceCtx.stroke();
 
-        sourceCtx.lineWidth = height * 0.09;
-        sourceCtx.beginPath();
-        sourceCtx.moveTo(fingerX, fingerStartY);
-        sourceCtx.lineTo(fingerX, fingerTip);
-        sourceCtx.stroke();
+        const drawKeyRow = (count, rowY, keyWidth, offset = 0) => {
+            const rowWidth = count * keyWidth + (count - 1) * keyGap;
+            const startX = centerX - rowWidth / 2 + offset;
+            for (let index = 0; index < count; index++) {
+                drawKey(startX + index * (keyWidth + keyGap), rowY, keyWidth, keyHeight);
+            }
+        };
+        drawKeyRow(10, keyTop, width * 0.061);
+        drawKeyRow(9, keyTop + height * 0.09, width * 0.067, width * 0.006);
+        drawKeyRow(3, keyTop + height * 0.18, width * 0.071, -width * 0.008);
+        drawKeyRow(3, keyTop + height * 0.18, width * 0.071, width * 0.23);
+        drawKey(spaceX, spaceY, spaceWidth, keyHeight, easedPress > 0.7);
 
-        sourceCtx.lineWidth = height * 0.055;
+        const palmTop = height * 0.31;
+        const palmBottom = height * 0.55;
+        const fingerWidth = height * 0.085;
         sourceCtx.beginPath();
-        sourceCtx.moveTo(fingerX - height * 0.07, height * 0.56);
-        sourceCtx.quadraticCurveTo(fingerX - height * 0.14, height * 0.59, fingerX - height * 0.11, height * 0.64);
-        sourceCtx.moveTo(fingerX + height * 0.07, height * 0.57);
-        sourceCtx.quadraticCurveTo(fingerX + height * 0.13, height * 0.6, fingerX + height * 0.1, height * 0.64);
+        sourceCtx.moveTo(centerX - fingerWidth / 2, palmBottom - height * 0.08);
+        sourceCtx.lineTo(centerX - fingerWidth / 2, fingerTip - height * 0.025);
+        sourceCtx.quadraticCurveTo(centerX - fingerWidth / 2, fingerTip, centerX, fingerTip);
+        sourceCtx.quadraticCurveTo(centerX + fingerWidth / 2, fingerTip, centerX + fingerWidth / 2, fingerTip - height * 0.025);
+        sourceCtx.lineTo(centerX + fingerWidth / 2, palmBottom - height * 0.08);
+        sourceCtx.quadraticCurveTo(centerX + height * 0.13, palmTop + height * 0.07, centerX + height * 0.14, palmTop + height * 0.15);
+        sourceCtx.quadraticCurveTo(centerX + height * 0.15, palmTop + height * 0.22, centerX + height * 0.1, palmTop + height * 0.22);
+        sourceCtx.quadraticCurveTo(centerX + height * 0.14, palmTop + height * 0.29, centerX + height * 0.08, palmTop + height * 0.3);
+        sourceCtx.quadraticCurveTo(centerX + height * 0.12, palmTop + height * 0.37, centerX + height * 0.055, palmTop + height * 0.37);
+        sourceCtx.quadraticCurveTo(centerX + height * 0.07, palmBottom, centerX, palmBottom);
+        sourceCtx.quadraticCurveTo(centerX - height * 0.1, palmBottom, centerX - height * 0.12, palmTop + height * 0.29);
+        sourceCtx.quadraticCurveTo(centerX - height * 0.19, palmTop + height * 0.27, centerX - height * 0.16, palmTop + height * 0.2);
+        sourceCtx.quadraticCurveTo(centerX - height * 0.13, palmTop + height * 0.13, centerX - height * 0.07, palmTop + height * 0.16);
+        sourceCtx.quadraticCurveTo(centerX - height * 0.055, palmTop + height * 0.1, centerX - fingerWidth / 2, palmBottom - height * 0.08);
+        sourceCtx.closePath();
+        sourceCtx.fill();
+
+        sourceCtx.globalCompositeOperation = 'destination-out';
+        sourceCtx.lineWidth = Math.max(3, height * 0.018);
+        sourceCtx.beginPath();
+        sourceCtx.moveTo(centerX - height * 0.09, palmTop + height * 0.25);
+        sourceCtx.quadraticCurveTo(centerX - height * 0.025, palmTop + height * 0.29, centerX + height * 0.035, palmTop + height * 0.27);
+        sourceCtx.moveTo(centerX - height * 0.075, palmTop + height * 0.32);
+        sourceCtx.quadraticCurveTo(centerX - height * 0.015, palmTop + height * 0.35, centerX + height * 0.035, palmTop + height * 0.34);
+        sourceCtx.stroke();
+        sourceCtx.globalCompositeOperation = 'source-over';
+
+        sourceCtx.strokeStyle = '#000000';
+        sourceCtx.lineWidth = Math.max(2, height * 0.009);
+        sourceCtx.beginPath();
+        sourceCtx.moveTo(centerX - fingerWidth * 0.32, palmBottom - height * 0.08);
+        sourceCtx.lineTo(centerX - fingerWidth * 0.32, fingerTip - height * 0.05);
         sourceCtx.stroke();
 
         const clickAge = phase >= 0.28
