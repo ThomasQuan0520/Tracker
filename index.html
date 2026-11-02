@@ -757,7 +757,6 @@
     let NUM_STEPS = 16;
     let bpm = 120;
     let isPlaying = false;
-    let hasStartedPlayback = false;
     let currentPresetName = '';
     let titleBreathingAmount = 0;
     let breathingPhase = 0;
@@ -1474,7 +1473,7 @@
             }
             const average = sum / scopeDataArray.length;
             const threshold = 0.01;
-            if (!hasStartedPlayback) {
+            if (!isPlaying) {
                 masterScopeAnimation.renderSpacePrompt({ timestamp, breathingAmount: titleBreathingAmount });
             } else if (average > threshold) {
                 const animationMode = Math.floor(completedRounds / 4) % 4;
@@ -1969,7 +1968,6 @@
         }
 
         if (e.code === 'Space') {
-            hasStartedPlayback = true;
             isPlaying = !isPlaying;
             updateStatusDisplay();
             editHalf = 0; 
