@@ -55,13 +55,10 @@ window.masterScopeAnimation = (() => {
         sourceCtx.textAlign = 'center';
         sourceCtx.textBaseline = 'middle';
         const fontSize = Math.min(height * 0.28, width * 0.22);
-        sourceCtx.font = `900 ${fontSize}px Arial, sans-serif`;
-        sourceCtx.lineWidth = Math.max(2, fontSize * 0.05);
-        sourceCtx.strokeStyle = '#FFFFFF';
-        sourceCtx.strokeText('PRESS', width / 2, height * 0.34);
+        sourceCtx.font = `400 ${fontSize}px 'Helvetica Neue', Arial, sans-serif`;
         sourceCtx.fillText('PRESS', width / 2, height * 0.34);
-        sourceCtx.strokeText('SPACE', width / 2, height * 0.62);
-        sourceCtx.fillText('SPACE', width / 2, height * 0.62);
+        const characterOffset = sourceCtx.measureText(' ').width;
+        sourceCtx.fillText('SPACE', width / 2 + characterOffset, height * 0.62);
         drawDotMatrix(scopeCanvas, sourceCanvas, breathingAmount);
     }
 
