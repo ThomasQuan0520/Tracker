@@ -46,158 +46,22 @@ window.masterScopeAnimation = (() => {
         drawDotMatrix(scopeCanvas, sourceCanvas, breathingAmount);
     }
 
-    function renderSpacePrompt({ timestamp, breathingAmount }) {
+    function renderSpacePrompt() {
         const width = scopeCanvas.width;
         const height = scopeCanvas.height;
-        const sourceCtx = sourceCanvas.getContext('2d');
-        const centerX = width / 2;
-        const cycleDuration = 1800;
-        const phase = (timestamp % cycleDuration) / cycleDuration;
-        const pressProgress = phase < 0.28
-            ? phase / 0.28
-            : phase < 0.52
-                ? 1
-                : phase < 0.78
-                    ? 1 - (phase - 0.52) / 0.26
-                    : 0;
-        const easedPress = pressProgress * pressProgress * (3 - 2 * pressProgress);
-        sourceCtx.clearRect(0, 0, width, height);
-        sourceCtx.fillStyle = '#FFFFFF';
-        sourceCtx.lineCap = 'round';
-        sourceCtx.lineJoin = 'round';
-
-        const keyHeight = height * 0.075;
-        const keyGap = width * 0.018;
-        const keyWidth = width * 0.073;
-        const strokeWidth = Math.max(3, height * 0.023);
-
-        const roundedRect = (x, y, rectWidth, rectHeight, radius) => {
-            sourceCtx.beginPath();
-            sourceCtx.moveTo(x + radius, y);
-            sourceCtx.lineTo(x + rectWidth - radius, y);
-            sourceCtx.quadraticCurveTo(x + rectWidth, y, x + rectWidth, y + radius);
-            sourceCtx.lineTo(x + rectWidth, y + rectHeight - radius);
-            sourceCtx.quadraticCurveTo(x + rectWidth, y + rectHeight, x + rectWidth - radius, y + rectHeight);
-            sourceCtx.lineTo(x + radius, y + rectHeight);
-            sourceCtx.quadraticCurveTo(x, y + rectHeight, x, y + rectHeight - radius);
-            sourceCtx.lineTo(x, y + radius);
-            sourceCtx.quadraticCurveTo(x, y, x + radius, y);
-            sourceCtx.closePath();
-        };
-
-        const drawKey = (x, y, keyW, keyH, pressed = false) => {
-            roundedRect(x, y, keyW, keyH, height * 0.012);
-            sourceCtx.lineWidth = strokeWidth;
-            sourceCtx.stroke();
-            if (pressed) {
-                sourceCtx.beginPath();
-                sourceCtx.moveTo(x + keyW * 0.22, y + keyH * 0.35);
-                sourceCtx.lineTo(x + keyW * 0.78, y + keyH * 0.35);
-                sourceCtx.stroke();
-            }
-        };
-
-        const spaceWidth = width * 0.58;
-        const spaceX = centerX - spaceWidth / 2;
-        const spaceY = height * 0.79 + height * 0.025 * easedPress;
-        const spaceHeight = height * 0.13;
-        const sideKeyY = spaceY + spaceHeight * 0.08;
-        const nearbyKeyWidth = width * 0.095;
-        drawKey(spaceX - nearbyKeyWidth - keyGap, sideKeyY, nearbyKeyWidth, keyHeight);
-        drawKey(spaceX + spaceWidth + keyGap, sideKeyY, nearbyKeyWidth, keyHeight);
-        drawKey(centerX - nearbyKeyWidth - keyGap * 0.5, height * 0.67, nearbyKeyWidth, keyHeight);
-        drawKey(centerX + keyGap * 0.5, height * 0.67, nearbyKeyWidth, keyHeight);
-        drawKey(spaceX, spaceY, spaceWidth, spaceHeight, easedPress > 0.7);
-        roundedRect(spaceX + strokeWidth * 0.5, spaceY + strokeWidth * 0.5, spaceWidth - strokeWidth, spaceHeight - strokeWidth, height * 0.018);
-        sourceCtx.fill();
-        roundedRect(spaceX + width * 0.025, spaceY + height * 0.018, spaceWidth - width * 0.05, spaceHeight - height * 0.036, height * 0.018);
-        sourceCtx.lineWidth = Math.max(2, strokeWidth * 0.55);
-        sourceCtx.stroke();
-        const tipY = spaceY - height * 0.035;
-        const palmTop = height * 0.34;
-        const palmBottom = height * 0.56;
-        const handWidth = height * 0.24;
-        const fingerWidth = height * 0.095;
-
-        sourceCtx.save();
-        sourceCtx.translate(0, -height * 0.17 * (1 - easedPress));
-        // Draw hand as a single clear pointing silhouette, with separated curled fingers.
-        sourceCtx.beginPath();
-        sourceCtx.moveTo(centerX - handWidth * 0.5, palmBottom);
-        sourceCtx.lineTo(centerX - handWidth * 0.5, palmTop + height * 0.05);
-        sourceCtx.quadraticCurveTo(centerX - handWidth * 0.5, palmTop, centerX - handWidth * 0.31, palmTop);
-        sourceCtx.lineTo(centerX - fingerWidth * 0.5, palmTop);
-        sourceCtx.lineTo(centerX - fingerWidth * 0.5, tipY);
-        sourceCtx.quadraticCurveTo(centerX, tipY + height * 0.04, centerX + fingerWidth * 0.5, tipY);
-        sourceCtx.lineTo(centerX + fingerWidth * 0.5, palmTop + height * 0.035);
-        sourceCtx.quadraticCurveTo(centerX + fingerWidth * 0.5, palmTop - height * 0.025, centerX + fingerWidth * 0.68, palmTop - height * 0.025);
-        sourceCtx.quadraticCurveTo(centerX + fingerWidth * 0.86, palmTop - height * 0.025, centerX + fingerWidth * 0.86, palmTop + height * 0.035);
-        sourceCtx.lineTo(centerX + fingerWidth * 0.86, palmTop + height * 0.14);
-        sourceCtx.quadraticCurveTo(centerX + fingerWidth * 0.9, palmTop + height * 0.085, centerX + fingerWidth * 1.08, palmTop + height * 0.09);
-        sourceCtx.quadraticCurveTo(centerX + fingerWidth * 1.26, palmTop + height * 0.1, centerX + fingerWidth * 1.22, palmTop + height * 0.18);
-        sourceCtx.lineTo(centerX + fingerWidth * 1.1, palmBottom - height * 0.015);
-        sourceCtx.quadraticCurveTo(centerX + fingerWidth * 0.92, palmBottom + height * 0.02, centerX + fingerWidth * 0.64, palmBottom);
-        sourceCtx.lineTo(centerX - handWidth * 0.25, palmBottom);
-        sourceCtx.quadraticCurveTo(centerX - handWidth * 0.52, palmBottom, centerX - handWidth * 0.5, palmBottom - height * 0.07);
-        sourceCtx.closePath();
-        sourceCtx.fill();
-
-        // Thumb points inward, making the hand shape readable at dot-matrix scale.
-        sourceCtx.lineCap = 'round';
-        sourceCtx.lineJoin = 'round';
-        sourceCtx.lineWidth = height * 0.075;
-        sourceCtx.beginPath();
-        sourceCtx.moveTo(centerX - handWidth * 0.35, palmTop + height * 0.17);
-        sourceCtx.quadraticCurveTo(centerX - handWidth * 0.72, palmTop + height * 0.15, centerX - handWidth * 0.68, palmTop + height * 0.23);
-        sourceCtx.quadraticCurveTo(centerX - handWidth * 0.64, palmTop + height * 0.29, centerX - handWidth * 0.35, palmTop + height * 0.31);
-        sourceCtx.stroke();
-
-        sourceCtx.save();
-        sourceCtx.globalCompositeOperation = 'destination-out';
-        sourceCtx.lineWidth = Math.max(3, height * 0.024);
-        sourceCtx.beginPath();
-        sourceCtx.moveTo(centerX + fingerWidth * 0.68, palmTop + height * 0.055);
-        sourceCtx.lineTo(centerX + fingerWidth * 0.68, palmTop + height * 0.13);
-        sourceCtx.moveTo(centerX + fingerWidth * 1.03, palmTop + height * 0.145);
-        sourceCtx.lineTo(centerX + fingerWidth * 1.01, palmTop + height * 0.19);
-        sourceCtx.stroke();
-        sourceCtx.restore();
-        sourceCtx.restore();
-
-        sourceCtx.textAlign = 'center';
-        sourceCtx.textBaseline = 'middle';
-        sourceCtx.font = `bold ${Math.max(18, height * 0.11)}px monospace`;
-        sourceCtx.lineWidth = Math.max(4, height * 0.018);
-        const labelX = centerX + spaceWidth * 0.2;
-        const labelY = spaceY + spaceHeight * 0.52;
-        sourceCtx.save();
-        sourceCtx.globalCompositeOperation = 'destination-out';
-        sourceCtx.fillText('SPACE', labelX, labelY);
-        sourceCtx.restore();
-
-        const clickAge = phase >= 0.28
-            ? (phase - 0.28) * cycleDuration
-            : (phase + 1 - 0.28) * cycleDuration;
-        if (clickAge < 480) {
-            const particleCount = 12;
-            const fade = 1 - clickAge / 480;
-            for (let particle = 0; particle < particleCount; particle++) {
-                const angle = particle / particleCount * Math.PI * 2 + 0.18;
-                const distance = height * (0.035 + clickAge * 0.00016);
-                const x = centerX + Math.cos(angle) * distance;
-                const y = spaceY + Math.sin(angle) * distance * 0.45;
-                const size = height * (0.022 + (particle % 3) * 0.004) * fade;
-                sourceCtx.globalAlpha = fade;
-                sourceCtx.lineWidth = Math.max(2, size);
-                sourceCtx.beginPath();
-                sourceCtx.moveTo(x - Math.cos(angle) * size, y - Math.sin(angle) * size);
-                sourceCtx.lineTo(x + Math.cos(angle) * size, y + Math.sin(angle) * size);
-                sourceCtx.stroke();
-            }
-            sourceCtx.globalAlpha = 1;
+        scopeCtx.clearRect(0, 0, width, height);
+        scopeCtx.fillStyle = '#FFFFFF';
+        scopeCtx.textAlign = 'center';
+        scopeCtx.textBaseline = 'middle';
+        let fontSize = Math.min(height * 0.16, width * 0.08);
+        scopeCtx.font = `bold ${fontSize}px monospace`;
+        const label = 'PRESS SPACE TO PLAY';
+        const maxTextWidth = width * 0.9;
+        if (scopeCtx.measureText(label).width > maxTextWidth) {
+            fontSize *= maxTextWidth / scopeCtx.measureText(label).width;
+            scopeCtx.font = `bold ${fontSize}px monospace`;
         }
-
-        drawDotMatrix(scopeCanvas, sourceCanvas, Math.max(0.8, breathingAmount));
+        scopeCtx.fillText(label, width / 2, height / 2);
     }
 
     function renderTearEye({ timestamp, breathingAmount }) {
