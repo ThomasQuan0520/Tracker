@@ -54,40 +54,18 @@ window.masterScopeAnimation = (() => {
         sourceCtx.fillStyle = '#FFFFFF';
         sourceCtx.textAlign = 'center';
         sourceCtx.textBaseline = 'middle';
-        let fontSize = Math.min(height * 0.16, width * 0.08);
+        let fontSize = Math.min(height * 0.2, width * 0.12);
         sourceCtx.font = `bold ${fontSize}px monospace`;
-        const label = 'PRESS SPACE TO PLAY';
+        const label = 'PRESS SPACE';
         const maxTextWidth = width * 0.9;
         if (sourceCtx.measureText(label).width > maxTextWidth) {
             fontSize *= maxTextWidth / sourceCtx.measureText(label).width;
             sourceCtx.font = `bold ${fontSize}px monospace`;
         }
-        sourceCtx.fillText(label, width / 2, height / 2);
-
-        const imageData = sourceCtx.getImageData(0, 0, width, height).data;
-        const matrixScale = Math.min(1, Math.max(0.4, height / 100));
-        const gap = Math.max(4, Math.round(8 * matrixScale));
-        const radius = gap * 0.36;
-        scopeCtx.clearRect(0, 0, width, height);
-        scopeCtx.fillStyle = '#FFFFFF';
-        for (let y = 0; y < height; y += gap) {
-            for (let x = 0; x < width; x += gap) {
-                let lit = false;
-                for (let sampleY = y; sampleY < Math.min(y + gap, height) && !lit; sampleY += 2) {
-                    for (let sampleX = x; sampleX < Math.min(x + gap, width); sampleX += 2) {
-                        if (imageData[(sampleY * width + sampleX) * 4 + 3] > 96) {
-                            lit = true;
-                            break;
-                        }
-                    }
-                }
-                if (lit) {
-                    scopeCtx.beginPath();
-                    scopeCtx.arc(x + gap / 2, y + gap / 2, radius, 0, Math.PI * 2);
-                    scopeCtx.fill();
-                }
-            }
-        }
+        sourceCtx.fillText(label, width / 2, height * 0.43);
+        sourceCtx.font = `bold ${Math.min(height * 0.09, width * 0.055)}px monospace`;
+        sourceCtx.fillText('TO PLAY', width / 2, height * 0.62);
+        drawDotMatrix(scopeCanvas, sourceCanvas, 1);
     }
 
     function renderTearEye({ timestamp, breathingAmount }) {
