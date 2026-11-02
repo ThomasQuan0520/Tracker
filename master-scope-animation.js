@@ -46,7 +46,7 @@ window.masterScopeAnimation = (() => {
         drawDotMatrix(scopeCanvas, sourceCanvas, breathingAmount);
     }
 
-    function renderSpacePrompt() {
+    function renderSpacePrompt({ breathingAmount }) {
         const width = scopeCanvas.width;
         const height = scopeCanvas.height;
         const sourceCtx = sourceCanvas.getContext('2d');
@@ -65,7 +65,7 @@ window.masterScopeAnimation = (() => {
         sourceCtx.fillText(label, width / 2, height * 0.43);
         sourceCtx.font = `bold ${Math.min(height * 0.09, width * 0.055)}px monospace`;
         sourceCtx.fillText('TO PLAY', width / 2, height * 0.62);
-        drawDotMatrix(scopeCanvas, sourceCanvas, 1);
+        drawDotMatrix(scopeCanvas, sourceCanvas, breathingAmount);
     }
 
     function renderTearEye({ timestamp, breathingAmount }) {
