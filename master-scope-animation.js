@@ -66,14 +66,9 @@ window.masterScopeAnimation = (() => {
         sourceCtx.lineCap = 'round';
         sourceCtx.lineJoin = 'round';
 
-        const keyTop = height * 0.57;
         const keyHeight = height * 0.075;
         const keyGap = width * 0.018;
         const keyWidth = width * 0.073;
-        const caseX = width * 0.08;
-        const caseY = height * 0.545;
-        const caseWidth = width * 0.84;
-        const caseHeight = height * 0.405;
         const strokeWidth = Math.max(3, height * 0.023);
 
         const roundedRect = (x, y, rectWidth, rectHeight, radius) => {
@@ -90,10 +85,6 @@ window.masterScopeAnimation = (() => {
             sourceCtx.closePath();
         };
 
-        roundedRect(caseX, caseY, caseWidth, caseHeight, height * 0.035);
-        sourceCtx.lineWidth = strokeWidth;
-        sourceCtx.stroke();
-
         const drawKey = (x, y, keyW, keyH, pressed = false) => {
             roundedRect(x, y, keyW, keyH, height * 0.012);
             sourceCtx.lineWidth = strokeWidth;
@@ -106,34 +97,30 @@ window.masterScopeAnimation = (() => {
             }
         };
 
-        const drawKeyRow = (count, y, offset = 0) => {
-            const rowWidth = count * keyWidth + (count - 1) * keyGap;
-            const startX = centerX - rowWidth / 2 + offset;
-            for (let index = 0; index < count; index++) {
-                drawKey(startX + index * (keyWidth + keyGap), y, keyWidth, keyHeight);
-            }
-        };
-        drawKeyRow(7, keyTop);
-        drawKeyRow(7, keyTop + height * 0.105, width * 0.015);
-        drawKeyRow(3, keyTop + height * 0.21, -width * 0.16);
-        drawKeyRow(3, keyTop + height * 0.21, width * 0.16);
-
-        const spaceWidth = width * 0.48;
+        const spaceWidth = width * 0.44;
         const spaceX = centerX - spaceWidth / 2;
-        const spaceY = height * 0.85 + height * 0.022 * easedPress;
-        const spaceHeight = height * 0.075;
+        const spaceY = height * 0.82 + height * 0.025 * easedPress;
+        const spaceHeight = height * 0.09;
+        const sideKeyY = spaceY + spaceHeight * 0.08;
+        const nearbyKeyWidth = width * 0.105;
+        drawKey(spaceX - nearbyKeyWidth - keyGap, sideKeyY, nearbyKeyWidth, keyHeight);
+        drawKey(spaceX + spaceWidth + keyGap, sideKeyY, nearbyKeyWidth, keyHeight);
+        drawKey(centerX - nearbyKeyWidth - keyGap * 0.5, height * 0.67, nearbyKeyWidth, keyHeight);
+        drawKey(centerX + keyGap * 0.5, height * 0.67, nearbyKeyWidth, keyHeight);
         drawKey(spaceX, spaceY, spaceWidth, spaceHeight, easedPress > 0.7);
         sourceCtx.textAlign = 'center';
         sourceCtx.textBaseline = 'middle';
         sourceCtx.font = `bold ${Math.max(10, height * 0.035)}px monospace`;
         sourceCtx.fillText('SPACE', centerX, spaceY + spaceHeight * 0.52);
 
-        const tipY = height * 0.53 + (spaceY - height * 0.53) * easedPress;
-        const palmTop = height * 0.19;
-        const palmBottom = height * 0.43;
+        const tipY = spaceY - height * 0.035;
+        const palmTop = height * 0.34;
+        const palmBottom = height * 0.56;
         const handWidth = height * 0.24;
         const fingerWidth = height * 0.095;
 
+        sourceCtx.save();
+        sourceCtx.translate(0, -height * 0.17 * (1 - easedPress));
         // Draw hand as a single clear pointing silhouette, with separated curled fingers.
         sourceCtx.beginPath();
         sourceCtx.moveTo(centerX - handWidth * 0.5, palmBottom);
@@ -175,6 +162,7 @@ window.masterScopeAnimation = (() => {
         sourceCtx.lineTo(centerX + fingerWidth * 1.01, palmTop + height * 0.19);
         sourceCtx.stroke();
         sourceCtx.restore();
+        sourceCtx.restore();
 
         const clickAge = phase >= 0.28
             ? (phase - 0.28) * cycleDuration
@@ -186,7 +174,7 @@ window.masterScopeAnimation = (() => {
                 const angle = particle / particleCount * Math.PI * 2 + 0.18;
                 const distance = height * (0.035 + clickAge * 0.00016);
                 const x = centerX + Math.cos(angle) * distance;
-                const y = keyTop + Math.sin(angle) * distance * 0.45;
+                const y = spaceY + Math.sin(angle) * distance * 0.45;
                 const size = height * (0.022 + (particle % 3) * 0.004) * fade;
                 sourceCtx.globalAlpha = fade;
                 sourceCtx.lineWidth = Math.max(2, size);
