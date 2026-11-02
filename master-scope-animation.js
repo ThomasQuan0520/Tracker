@@ -97,22 +97,20 @@ window.masterScopeAnimation = (() => {
             }
         };
 
-        const spaceWidth = width * 0.44;
+        const spaceWidth = width * 0.58;
         const spaceX = centerX - spaceWidth / 2;
-        const spaceY = height * 0.82 + height * 0.025 * easedPress;
-        const spaceHeight = height * 0.09;
+        const spaceY = height * 0.79 + height * 0.025 * easedPress;
+        const spaceHeight = height * 0.13;
         const sideKeyY = spaceY + spaceHeight * 0.08;
-        const nearbyKeyWidth = width * 0.105;
+        const nearbyKeyWidth = width * 0.095;
         drawKey(spaceX - nearbyKeyWidth - keyGap, sideKeyY, nearbyKeyWidth, keyHeight);
         drawKey(spaceX + spaceWidth + keyGap, sideKeyY, nearbyKeyWidth, keyHeight);
         drawKey(centerX - nearbyKeyWidth - keyGap * 0.5, height * 0.67, nearbyKeyWidth, keyHeight);
         drawKey(centerX + keyGap * 0.5, height * 0.67, nearbyKeyWidth, keyHeight);
         drawKey(spaceX, spaceY, spaceWidth, spaceHeight, easedPress > 0.7);
-        sourceCtx.textAlign = 'center';
-        sourceCtx.textBaseline = 'middle';
-        sourceCtx.font = `bold ${Math.max(10, height * 0.035)}px monospace`;
-        sourceCtx.fillText('SPACE', centerX, spaceY + spaceHeight * 0.52);
-
+        roundedRect(spaceX + width * 0.025, spaceY + height * 0.018, spaceWidth - width * 0.05, spaceHeight - height * 0.036, height * 0.018);
+        sourceCtx.lineWidth = Math.max(2, strokeWidth * 0.55);
+        sourceCtx.stroke();
         const tipY = spaceY - height * 0.035;
         const palmTop = height * 0.34;
         const palmBottom = height * 0.56;
@@ -164,6 +162,15 @@ window.masterScopeAnimation = (() => {
         sourceCtx.restore();
         sourceCtx.restore();
 
+        sourceCtx.textAlign = 'center';
+        sourceCtx.textBaseline = 'middle';
+        sourceCtx.font = `bold ${Math.max(18, height * 0.11)}px monospace`;
+        sourceCtx.lineWidth = Math.max(4, height * 0.018);
+        const labelX = centerX + spaceWidth * 0.2;
+        const labelY = spaceY + spaceHeight * 0.52;
+        sourceCtx.strokeText('SPACE', labelX, labelY);
+        sourceCtx.fillText('SPACE', labelX, labelY);
+
         const clickAge = phase >= 0.28
             ? (phase - 0.28) * cycleDuration
             : (phase + 1 - 0.28) * cycleDuration;
@@ -186,7 +193,7 @@ window.masterScopeAnimation = (() => {
             sourceCtx.globalAlpha = 1;
         }
 
-        drawDotMatrix(scopeCanvas, sourceCanvas, breathingAmount);
+        drawDotMatrix(scopeCanvas, sourceCanvas, Math.max(0.8, breathingAmount));
     }
 
     function renderTearEye({ timestamp, breathingAmount }) {
