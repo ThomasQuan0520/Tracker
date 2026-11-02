@@ -54,17 +54,19 @@ window.masterScopeAnimation = (() => {
         sourceCtx.fillStyle = '#FFFFFF';
         sourceCtx.textAlign = 'center';
         sourceCtx.textBaseline = 'middle';
-        let fontSize = Math.min(height * 0.2, width * 0.12);
+        const fontSize = Math.min(height * 0.28, width * 0.22);
         sourceCtx.font = `bold ${fontSize}px monospace`;
-        const label = 'PRESS SPACE';
-        const maxTextWidth = width * 0.9;
-        if (sourceCtx.measureText(label).width > maxTextWidth) {
-            fontSize *= maxTextWidth / sourceCtx.measureText(label).width;
-            sourceCtx.font = `bold ${fontSize}px monospace`;
-        }
-        sourceCtx.fillText(label, width / 2, height * 0.43);
-        sourceCtx.font = `bold ${Math.min(height * 0.09, width * 0.055)}px monospace`;
-        sourceCtx.fillText('TO PLAY', width / 2, height * 0.62);
+        sourceCtx.lineWidth = Math.max(2, fontSize * 0.05);
+        sourceCtx.strokeStyle = '#FFFFFF';
+        sourceCtx.strokeText('PRESS', width / 2, height * 0.34);
+        sourceCtx.fillText('PRESS', width / 2, height * 0.34);
+        sourceCtx.strokeText('SPACE', width / 2, height * 0.62);
+        sourceCtx.fillText('SPACE', width / 2, height * 0.62);
+        const subheadingSize = Math.min(height * 0.1, width * 0.08);
+        sourceCtx.font = `bold ${subheadingSize}px monospace`;
+        sourceCtx.lineWidth = Math.max(2, subheadingSize * 0.05);
+        sourceCtx.strokeText('TO PLAY', width / 2, height * 0.88);
+        sourceCtx.fillText('TO PLAY', width / 2, height * 0.88);
         drawDotMatrix(scopeCanvas, sourceCanvas, breathingAmount);
     }
 
