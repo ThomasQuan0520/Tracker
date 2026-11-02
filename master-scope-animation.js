@@ -55,18 +55,13 @@ window.masterScopeAnimation = (() => {
         sourceCtx.textAlign = 'center';
         sourceCtx.textBaseline = 'middle';
         const fontSize = Math.min(height * 0.28, width * 0.22);
-        sourceCtx.font = `bold ${fontSize}px monospace`;
+        sourceCtx.font = `900 ${fontSize}px Arial, sans-serif`;
         sourceCtx.lineWidth = Math.max(2, fontSize * 0.05);
         sourceCtx.strokeStyle = '#FFFFFF';
         sourceCtx.strokeText('PRESS', width / 2, height * 0.34);
         sourceCtx.fillText('PRESS', width / 2, height * 0.34);
         sourceCtx.strokeText('SPACE', width / 2, height * 0.62);
         sourceCtx.fillText('SPACE', width / 2, height * 0.62);
-        const subheadingSize = Math.min(height * 0.1, width * 0.08);
-        sourceCtx.font = `bold ${subheadingSize}px monospace`;
-        sourceCtx.lineWidth = Math.max(2, subheadingSize * 0.05);
-        sourceCtx.strokeText('TO PLAY', width / 2, height * 0.88);
-        sourceCtx.fillText('TO PLAY', width / 2, height * 0.88);
         drawDotMatrix(scopeCanvas, sourceCanvas, breathingAmount);
     }
 
