@@ -108,6 +108,8 @@ window.masterScopeAnimation = (() => {
         drawKey(centerX - nearbyKeyWidth - keyGap * 0.5, height * 0.67, nearbyKeyWidth, keyHeight);
         drawKey(centerX + keyGap * 0.5, height * 0.67, nearbyKeyWidth, keyHeight);
         drawKey(spaceX, spaceY, spaceWidth, spaceHeight, easedPress > 0.7);
+        roundedRect(spaceX + strokeWidth * 0.5, spaceY + strokeWidth * 0.5, spaceWidth - strokeWidth, spaceHeight - strokeWidth, height * 0.018);
+        sourceCtx.fill();
         roundedRect(spaceX + width * 0.025, spaceY + height * 0.018, spaceWidth - width * 0.05, spaceHeight - height * 0.036, height * 0.018);
         sourceCtx.lineWidth = Math.max(2, strokeWidth * 0.55);
         sourceCtx.stroke();
@@ -168,8 +170,10 @@ window.masterScopeAnimation = (() => {
         sourceCtx.lineWidth = Math.max(4, height * 0.018);
         const labelX = centerX + spaceWidth * 0.2;
         const labelY = spaceY + spaceHeight * 0.52;
-        sourceCtx.strokeText('SPACE', labelX, labelY);
+        sourceCtx.save();
+        sourceCtx.globalCompositeOperation = 'destination-out';
         sourceCtx.fillText('SPACE', labelX, labelY);
+        sourceCtx.restore();
 
         const clickAge = phase >= 0.28
             ? (phase - 0.28) * cycleDuration
